@@ -1,0 +1,1385 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<title>Introduction</title>
+
+<link rel="stylesheet" href="../reveal/css/reveal.css">
+<link rel="stylesheet" href="../reveal/css/theme/black.css">
+<link rel="stylesheet" href="../reveal/lib/css/zenburn.css">
+<!-- <link rel="stylesheet" href="./custom.css"> -->
+<link rel="stylesheet" href="../reveal/css/print/pdf.css" media="print">
+
+<style>
+.reveal figure > img {
+    max-height: 50vh;
+}
+
+.reveal pre code {
+    max-height: 411px; /* 15 lines */
+}
+</style>
+
+</head>
+<body>
+
+<div class="reveal">
+    <div class="slides">
+
+<section>
+
+    <h1>Introduction to Object Oriented Programming</h1>
+    <p>A basic overview to help you understand OOP in JavaScript.</p>
+
+    <aside class="notes">
+        <p>I'm trying to explain OOP mentality not just syntax.</p>
+        <p>Next week: design patterns. Week after: object calisthenics.</p>
+    </aside>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>Why learn OOP?</h2>
+    </section>
+
+    <section>
+
+        <h3>It's stood the test of time</h3>
+        <p class="fragment">OOP was created in the 60's and popularised in the 70's. This makes it older than any of us - older than some of our parents.</p>
+        <p class="fragment">It's a programming paradigm that is well tested and well loved.</p>
+
+        <aside class="notes">
+            <p>It's older than any of us and older than some of our parents.</p>
+        </aside>
+
+    </section>
+
+    <section>
+        <h3>It's great at separating out work</h3>
+        <p class="fragment">This makes it really useful when a lot of people are working on the same project.</p>
+    </section>
+
+    <section>
+        <h3>It's shaped modern programming</h3>
+        <p class="fragment">Once you understand OOP, you'll start to understand other code.</p>
+        <p class="fragment">You'll see similar techniques in unlikely places, such as CSS.</p>
+    </section>
+
+    <section>
+
+        <h3>It's not the only solution</h3>
+        <p class="fragment">There are plenty of times where it's not the correct approach.</p>
+        <p class="fragment">It's a great tool to have in your arsenal.</p>
+
+        <aside class="notes">
+            <p>Criticims of OOP include it being slower/less efficient, steep learning curve, stuggles to model time correctly.</p>
+        </aside>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>The problem with explaining OOP</h2>
+    </section>
+
+    <section>
+        <h3>Either it's really abstract ...</h3>
+        <p class="fragment">A lot of online tutorials explain OOP in really abstract terms (a <code>Cat</code> is a type of <code>Animal</code>)</p>
+    </section>
+
+    <section>
+        <h3>... it's just syntax ...</h3>
+        <pre class="fragment"><code class="js" data-trim>
+class Animal {
+    constructor(says) {
+        this.says = says;
+    }
+    talk() {
+        alert(this.says);
+    }
+}
+class Cat extends Animal {
+    constructor() {
+        super("meow");
+    }
+}
+        </code></pre>
+    </section>
+
+    <section>
+
+        <h3>... or it's really academic</h3>
+        <p class="fragment">Core concepts are Abstraction, Encapsulation, Inheritance and Polymorphism.</p>
+        <ul class="fragment">
+            <li><strong>S</strong><span class="fragment">ingle Responsibility Principle</span></li>
+            <li><strong>O</strong><span class="fragment">pen/Closed Principle</span></li>
+            <li><strong>L</strong><span class="fragment">iskov Substitution Principle</span></li>
+            <li><strong>I</strong><span class="fragment">nterface Segregation Principle</span></li>
+            <li><strong>D</strong><span class="fragment">ependency Inversion Principle</span></li>
+        </ul>
+
+        <aside class="notes">
+            <p>This is really good stuff and I'll explain it properly later.</p>
+        </aside>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+
+        <h2>Cooking</h2>
+
+        <aside class="notes">
+            <p>Something we can refer back to, a mental modal for OOP.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <figure>
+            <img src="./white-sauce.jpg">
+            <figcaption>White sauce</figcaption>
+        </figure>
+
+        <aside class="notes">
+            <ol>
+                <li>Melt some butter in a pan</li>
+                <li>Stir in flour</li>
+                <li>Slowly stir in milk</li>
+            </ol>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <figure>
+            <img src="./cheese-sauce.jpg">
+            <figcaption>Cheese sauce</figcaption>
+        </figure>
+
+        <aside class="notes">
+            <ol>
+                <li>Make <strong>White sauce</strong>, melt in cheese</li>
+            </ol>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <figure>
+            <img src="./macaroni-and-cheese.jpg">
+            <figcaption>Macaroni and cheese</figcaption>
+        </figure>
+
+        <aside class="notes">
+            <ol>
+                <li>Boil up some macaroni</li>
+                <li>Pour <strong>Cheese sauce</strong> over it</li>
+                <li>Bake it to brown the top</li>
+            </ol>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <figure>
+            <img src="./creamy-tuna.jpg">
+            <figcaption>Creamy tuna</figcaption>
+        </figure>
+
+        <aside class="notes">
+            <ol>
+                <li>Make <strong>White sauce</strong>, stir in tuna</li>
+            </ol>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <figure>
+            <img src="./pie.jpg">
+            <figcaption>Pie</figcaption>
+        </figure>
+
+        <aside class="notes">
+            <ol>
+                <li>Roll pastry flat</li>
+                <li>Put something in the pastry</li>
+                <li>Cook in the oven, gas mark 6, 30 minutes</li>
+            </ol>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <figure>
+            <img src="./tuna-pie.jpg">
+            <figcaption>Tuna pie</figcaption>
+        </figure>
+
+        <aside class="notes">
+            <ol>
+                <li>Add <strong>Creamy tuna</strong> to a <strong>pie</strong></li>
+            </ol>
+        </aside>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>Why did I just teach you how to cook?</h2>
+    </section>
+
+    <section>
+        <p>So I can explain OOP using a mental model we all understand.</p>
+        <p class="fragment">We had smaller parts which we built up into full meals.</p>
+    </section>
+
+    <section>
+        <h3>Core Concept: Abstraction</h3>
+        <p class="fragment">We only expose high-level mechanisms, not inner workings.</p>
+        <p class="fragment">You don't need to know how butter is churned or even how cheese sauce is made to pour it over macaroni.</p>
+    </section>
+
+    <section>
+        <h3>Core Concept: Encapsulation</h3>
+        <p class="fragment">Keep properties private and only interact with behaviours.</p>
+        <p class="fragment">Properties, or information, is wrapped in the recipe. For example: price of ingredients, is the recipe vegetarian?</p>
+    </section>
+
+    <section>
+        <h3>Core Concept: Inheritance</h3>
+        <p class="fragment">Sharing common features and functions between objects.</p>
+        <p class="fragment">The recipe for <strong>cheese sauce</strong> was 6 words long: make <strong>white sauce</strong>, melt in cheese.</p>
+    </section>
+
+    <section>
+        <h3>Core Concept: Polymorphism</h3>
+        <p class="fragment">Greek for "many shapes". Sub-classes should act like parent classes so they can be easily swapped out.</p>
+        <p class="fragment">You could use these recipes to make cheese-less macaroni and cheese, or even macaroni and tuna.</p>
+        <p class="fragment">You could also make a different sauce and pour that over macaroni.</p>
+    </section>
+
+    <section>
+        <h3>SOLID: Single Responsibility Principle</h3>
+        <p class="fragment">A class should only have a single responsibility.</p>
+        <p class="fragment">Each recipe only worried about one thing.</p>
+    </section>
+
+    <section>
+        <h3>SOLID: Open/Closed Principle</h3>
+        <p class="fragment">Objects should be open for extension but closed for modification.</p>
+        <p class="fragment">You can't remove the milk from <strong>white sauce</strong> but we could add cheese to make <strong>cheese sauce</strong>.</p>
+        <p class="fragment">We could stir in an Oxo cube to make a base for a chicken pie.</p>
+    </section>
+
+    <section>
+        <h3>SOLID: Liskov Substitution Principle</h3>
+        <p class="fragment">You should be able to replace instances with sub-classes without breaking the program.</p>
+        <p class="fragment">We could have used <strong>cheese sauce</strong> as the base for <strong>creamy tuna</strong> and we'd still have food at the end.</p>
+    </section>
+
+    <section>
+        <h3>SOLID: Interface Segregation Principle</h3>
+        <p class="fragment">Many client-specific interfaces are better than one general-purpose interface.</p>
+        <p class="fragment">Think of cooking something in a pan or baking something in an oven rathen than simply applying heat.</p>
+    </section>
+
+    <section>
+        <h3>SOLID: Dependency Inversion Principle</h3>
+        <p class="fragment">High-level modules should not depend on low-level modules, abstractions should not depend on details.</p>
+        <p class="fragment">You can change the ingredients of a recipe because the interface of adding ingredients and warming it still remains.</p>
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>Basic code comprehension</h2>
+    </section>
+
+    <section>
+
+        <h3>What does OOP look like in JavaScript?</h3>
+
+        <pre class="fragment"><code class="js" data-trim>
+var object = {};
+        </code></pre>
+
+        <pre class="fragment"><code class="js" data-trim>
+function objectMaker() {
+    return {};
+}
+
+var object = objectMaker();
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <h3>Objects in more detail</h3>
+
+        <p class="fragment">If functions are verbs (do this, draw that, walk over there) an object is a noun (and your classes are noun-makers).</p>
+
+        <pre class="fragment"><code class="js" data-trim>
+var whiteSauce = {
+
+    ingredients: ["butter", "flour", "milk"],
+
+    cook: function () {
+        this.ingredients.forEach(/* ... */);
+    }
+
+};
+        </code></pre>
+
+        <aside class="notes">
+            <p>I'll come back to the <code>this</code> keyword and fill in the <code>forEach</code> later on.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <p>ES6 removes some of the necessary syntax.</p>
+
+        <pre><code class="js" data-trim>
+var whiteSauce = {
+
+    ingredients: ["butter", "flour", "milk"],
+
+    cook() {
+        this.ingredients.forEach(/* ... */);
+    }
+
+};
+        </code></pre>
+
+        <aside class="notes">
+            <p>See the comma at the end of the array. We need it with objects, we don't need it with <code>class</code>.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <p>The object (<code>whiteSauce</code>) has a "property" or "information" (<code>ingredients</code>) and a "method" or "behaviour" (<code>cook</code>).</p>
+
+        <pre class="fragment"><code class="js" data-trim>
+// Dot syntax works when the only contains letters, numbers and
+// underscores. (but it can't start with a number)
+whiteSauce.cook();
+
+// Square bracket syntax allows you to pass in a string which
+// doesn't need to conform to the rules above.
+whiteSauce["cook"]();
+var method = "cook";
+whiteSauce[method]();
+        </code></pre>
+
+        <aside class="notes">
+            <p>Fun fact: the thing inside the square brackets is automatically converted into a string.</p>
+        </aside>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+
+        <h2>JavaScript's Prototypal Model</h2>
+
+        <aside class="notes">
+            <p>The 4th reason talking about OOP is hard - "forget everything you know about classical inheritance".</p>
+            <p>Remember that Simpsons episode where Homer becomes a missionary? "Done"</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <h3>The two OOP models</h3>
+
+        <p>In classical models (PHP) properties and methods are copied down through sub-classes.</p>
+        <p>Properties are always created new, multiple inheritance is possible and deeply nested sub-class structures are very efficient.</p>
+
+    </section>
+
+    <section>
+
+        <p>In the prototypal model (JavaScript) properties and methods are referenced by sub-classes.</p>
+        <p>A sub-class can only have a single parent, deep nesting is very inefficient but sub-classes take up very small amounts of memory and can be updated at run-time by updating the parent.</p>
+
+        <aside class="notes">
+            <p>You can simulate classical inheritance with the prototypal model but you can't simulate prototypal inheritance with the classical model.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <h3>What does it look like?</h3>
+
+        <pre class="fragment"><code class="js" data-trim>
+function WhiteSauce() {
+    this.ingredients = ["butter", "flour", "milk"];
+    this.temperature = 20;
+}
+WhiteSauce.prototype.feel = function () {
+    return this.temperature;
+};
+WhiteSauce.prototype.cook = function () {
+    this.ingredients.forEach(/* ... */);
+};
+
+var whiteSauce = new WhiteSauce();
+        </code></pre>
+
+    </section>
+    <section>
+
+        <p>Without the <code>new</code> keyword, <code>this</code> is set to <code>window</code> and we end up hammering the global scope.</p>
+
+        <pre><code class="js" data-trim>
+ingredients; // ReferenceError: ingredients is not defined
+var whiteSauce = WhiteSauce();
+ingredients; // -&gt; ["butter", "flour", "milk"] (oops)
+        </code></pre>
+
+        <p class="fragment">For this reason, always write your classes with a leading capital letter and train yourself to know that a leading capital letter requires <code>new</code>.</p>
+
+    </section>
+    <section>
+
+        <p>There's another way of creating the <code>prototype</code> but it only works if the class is a top-level parent.</p>
+
+        <pre><code class="js" data-trim>
+function WhiteSauce() {
+    this.ingredients = ["butter", "flour", "milk"];
+    this.temperature = 20;
+}
+WhiteSauce.prototype = {
+    feel: function () {
+        return this.temperature;
+    },
+    cook: function () {
+        this.ingredients.forEach(/* ... */);
+        while (this.isOnHob) {
+            this.temperature += 1;
+        }
+    }
+};
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <h3>Sub-classing</h3>
+
+        <pre class="fragment"><code class="js" data-trim>
+function CheeseSauce() {
+    WhiteSauce.call(this);
+    this.ingredients.push("cheese");
+}
+CheeseSauce.prototype = new WhiteSauce();
+CheeseSauce.prototype.taste = function () {
+
+    if (this.temperature &lt; 40) {
+        alert("Cold!");
+    }
+
+};
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>If you wanted to inherit without executing the constructor method for <code>WhiteSauce</code> until you construct <code>CheeseSauce</code>:</p>
+
+        <pre><code class="js" data-trim>
+var F = function () {};
+F.prototype = WhiteSauce.prototype;
+
+function CheeseSauce() {
+    // ...
+}
+CheeseSauce.prototype = new F();
+CheeseSauce.prototype.taste = function () {
+    // ...
+};
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Why didn't we just use <code>CheeseSauce.prototype = WhiteSauce.prototype</code>?</p>
+
+        <pre class="fragment"><code class="js" data-trim>
+function CheeseSauce() {
+    // ...
+}
+CheeseSauce.prototype = WhiteSauce.prototype;
+CheeseSauce.prototype.taste = function () {
+    // ...
+};
+
+var cheeseSauce = new CheeseSauce();
+cheeseSauce.taste(); // -&gt; alert("Cold!")
+
+var whiteSauce = new WhiteSauce();
+whiteSauce.taste(); // -&gt; alert("Cold!")
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>It didn't take long before we simplified that.</p>
+
+        <pre><code class="js" data-trim>
+function CheeseSauce() {
+    // ...
+}
+CheeseSauce.prototype = Object.create(WhiteSauce.prototype);
+CheeseSauce.prototype.code = function () {
+    // ...
+};
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>With the modern method <code>Object.assign</code> we can simplify it even further.</p>
+
+        <pre><code class="js" data-trim>
+function CheeseSauce() {
+    // ...
+}
+CheeseSauce.prototype = Object.assign(
+    Object.create(WhiteSauce.prototype),
+    {
+
+        taste: function () {
+            // ...
+        }
+
+    }
+);
+        </code></pre>
+
+        <aside class="notes">
+            <p><code>Object.assign</code> is the same as jQuery's <code>$.extend</code> without the deep flag.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <pre><code class="js" data-trim>
+function CheeseSauce() {
+    // ...
+}
+Object.assign(
+    CheeseSauce.prototype,
+    Object.create(WhiteSauce.prototype),
+    {
+
+        taste: function () {
+            // ...
+        }
+
+    }
+);
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>A gotcha with the prototypal style is that properties are referenced, not copied.</p>
+
+        <pre><code class="js" data-trim>
+function WhiteSauce() {
+    // ...
+}
+WhiteSauce.prototype.ingredients = [];
+
+function CheeseSauce() {
+    WhiteSauce.call(this);
+    this.ingredients.push("cheese");
+}
+CheeseSauce.prototype = Object.create(WhiteSauce.prototype);
+        </code></pre>
+        <pre><code class="js" data-trim>
+var cheese1 = new CheeseSauce();
+var cheese2 = new CheeseSauce();
+var whiteSauce = new WhiteSauce();
+whiteSauce.ingredients;
+// -&gt; ["butter", "flour", "milk", "cheese", "cheese"]
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Solution: always create properties inside methods.</p>
+
+        <pre><code class="js">
+// Bad: properties on the prototype.
+function WhiteSauce() {
+    // ...
+}
+WhiteSauce.prototype.ingredients = [];
+
+// Good: properties created in the method.
+function WhiteSauce() {
+    this.ingredients = [];
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>This is still pretty verbose so there's usually some kind of "create class" function.</p>
+
+        <pre><code class="js" data-trim>
+// PrototypeJS.
+var Animal = Class.create({
+    initialize: function (says) {
+        this.says = says;
+    },
+    talk: function () {
+        alert(this.says);
+    }
+});
+var Cat = Class.create(Animal, {
+    initialize: function ($super) {
+        $super("meow");
+    }
+});
+        </code></pre>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>JavaScript's class syntax</h2>
+    </section>
+
+    <section>
+
+        <p>ES6 simplified classes massively.</p>
+
+        <pre><code class="js" data-trim>
+class WhiteSauce {
+    constructor() {
+        this.ingredients = ["butter", "flour", "milk"];
+        this.temperature = 20;
+    }
+    feel() {
+        return this.temperature
+    }
+    cook() {
+        // ...
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var whiteSauce = new WhiteSauce();
+whiteSauce.feel(); // -&gt; 20
+        </code></pre>
+
+        <aside class="notes">
+            <p>Without <code>new</code> you'll get a <code>TypeError</code>.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>Sub-classing is even easier</p>
+
+        <pre><code class="js" data-trim>
+class CheeseSauce extends WhiteSauce {
+    constructor() {
+        super();
+        this.ingredients.push("cheese");
+    }
+    taste() {
+        if (this.temperature &lt; 40) {
+            alert("Cold!");
+        }
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var cheeseSauce = new CheeseSauce();
+cheeseSauce.feel(); // -&gt; 20
+cheeseSauce.taste(); // -&gt; alert("Cold!");
+        </code></pre>
+
+    </section>
+
+    <section>
+        <p>JavaScript's <code>class</code> syntax doesn't work in IE11 but <code>class</code> is just syntactic sugar for the <code>prototype</code> style.</p>
+        <p>This means that we can transpile <code>class</code> to with in IE11.</p>
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>Crockford Classless</h2>
+    </section>
+
+    <section>
+
+        <figure>
+            <img src="Douglas_Crockford%2C_February_2013.jpg">
+            <figcaption>Douglas Crockford - the JavaScript guy</figcaption>
+        </figure>
+
+    </section>
+
+    <section>
+
+        <p>Instead of using the <code>prototype</code> property (before <code>class</code> existed) Douglas Crockford had an idea.</p>
+
+        <pre><code class="js" data-trim>
+function WhiteSauce() {
+    var ingredient = ["butter", "flour", "milk"];
+    var temperature = 20;
+    return {
+        addIngredient: function (ingredient) {
+            ingredients.push(ingredient);
+        },
+        feel: function () {
+            return temperature;
+        },
+        // ...
+    };
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var whiteSauce = new WhiteSauce();
+whiteSauce.feel(); // -&gt; 20
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Sub-classing was easy since you just created an object, modified it and returned it.</p>
+
+        <pre><code class="js" data-trim>
+function CheeseSauce() {
+
+    var sauce = new WhiteSauce();
+
+    sauce.addIngredient("cheese");
+    sauce.taste = function () {
+        if (sauce.feel() &lt; 40) {
+            alert("Cold!");
+        }
+    };
+
+    return sauce;
+
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var cheeseSauce = new CheeseSauce();
+cheeseSauce.taste(); // -&gt; alert("Cold!")
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>There are a few advantages of "Crockford Classless".</p>
+        <ul>
+            <li>Inheritance happens at compilation time so deeply nested sub-classes are still efficient.</li>
+            <li>Because properties stay within the function, they become private - only the object itself can access them.</li>
+            <li>The <code>new</code> keyword was optional. Including it or ommitting it made no difference.</li>
+        </ul>
+
+    </section>
+
+    <section>
+        <p>Developers don't tend to like "Crockford Classless" so you're unlikely to see it in the wild.</p>
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>Keywords</h2>
+    </section>
+
+    <section>
+
+        <h3><code>new</code></h3>
+
+        <p><code>new</code> creates a new instance:</p>
+        <ol>
+            <li>It creates a new object (<code>var o = {};</code>).</li>
+            <li>It gives the new object access to the constructor's <code>prototype</code> property (<code class="fragment highlight-red visible">o.__proto__ = Thing.prototype</code>).</li>
+            <li>It sets the context of that object as <code>this</code> (<code>o === this</code>).</li>
+            <li>It returns the object unless the constructor function returns its own object (<code>return o</code>).</li>
+        </ol>
+
+        <aside class="notes">
+            <p>Never manually set <code>__proto__</code>.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>If you try to create a class made with <code>class</code> without using <code>new</code> you'll get an error.</p>
+
+        <pre><code class="js" data-trim>
+class Thing { /* ... */ }
+var thing = Thing(); // TypeError:
+// Class constructor Thing cannot be invoked without 'new'
+var thing2 = new Thing(); // No error.
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>This doesn't happen with the old style.</p>
+
+            <pre><code class="js" data-trim>
+function Thing() { /* ... */ }
+var thing = Thing(); // No error.
+            </code></pre>
+        </div>
+
+    </section>
+
+    <section>
+
+        <h3><code>this</code></h3>
+
+        <p><code>this</code> refers to the current context. In OOP, that's the current instance.</p>
+
+        <div class="fragment">
+
+            <p>You can define <code>this</code> using the <code>.call()</code> or <code>.apply()</code> methods.</p>
+
+            <pre><code class="js" data-trim>
+var whiteSauce = {
+    temperature: 20,
+    feel: function () {
+        return this.temperature;
+    },
+    // ...
+};
+
+whiteSauce.feel(); // -&gt; 20
+whiteSauce.feel.call({ temperature: 40 }); // -&gt; 40
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>A new function creates a new context. This is either <code>undefined</code> or <code>window</code>.</p>
+
+        <pre><code class="js" data-trim>
+class WhiteSauce {
+    // ...
+    addPan(pan) {
+        this.pan = pan;
+    }
+    cook() {
+        this.ingredient.forEach(function (ingredient) {
+            this.pan.add(ingredient);
+        });
+        while (this.isOnHob) {
+            this.temperature += 1;
+        }
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var whiteSauce = new WhiteSauce();
+whiteSauce.addPan(new Pan());
+whiteSauce.cook(); // TypeError: cannot read "pan" of undefined
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>To get around that, you can store <code>this</code> in a variable and refer to it.</p>
+
+        <pre><code class="js" data-trim>
+class WhiteSauce {
+    // ...
+    cook() {
+        var that = this;
+        that.ingredient.forEach(function (ingredient) {
+            that.pan.add(ingredient);
+        });
+        while (that.isOnHob) {
+            that.temperature += 1;
+        }
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var whiteSauce = new WhiteSauce();
+whiteSauce.addPan(new Pan());
+whiteSauce.cook();
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Many functions that take a function will allow the context to be set.</p>
+
+        <pre><code class="js" data-trim>
+class WhiteSauce {
+    // ...
+    cook() {
+        this.ingredient.forEach(function (ingredient) {
+            this.pan.add(ingredient);
+        }, this);
+        while (this.isOnHob) {
+            this.temperature += 1;
+        }
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var whiteSauce = new WhiteSauce();
+whiteSauce.addPan(new Pan());
+whiteSauce.cook();
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>JavaScript's fat-arrow syntax for functions won't reset the context.</p>
+
+        <pre><code class="js" data-trim>
+class WhiteSauce {
+    // ...
+    cook() {
+        this.ingredient.forEach(
+            (ingredient) =&gt; this.pan.add(ingredient)
+        );
+        while (this.isOnHob) {
+            this.temperature += 1;
+        }
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var whiteSauce = new WhiteSauce();
+whiteSauce.addPan(new Pan());
+whiteSauce.cook();
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <h3><code>super</code></h3>
+
+        <p><code>super</code> was introduced at the same time as <code>class</code> to access parent methods.</p>
+
+        <pre><code class="js" data-trim>
+class CheeseSauce extends WhiteSauce {
+    cook() {
+        super.cook();
+        alert("Yay cheese!");
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var cheeseSauce = new CheeseSauce();
+cheeseSauce.cook(); // -&gt; alert("Yay cheese!")
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>If you're overriding the <code>constructor</code> method, just call <code>super</code> as a function. That has to be the first line.</p>
+
+        <pre><code class="js" data-trim>
+class CheeseSauce extends WhiteSauce {
+    constructor(name) {
+        super();
+        this.ingredients.push("cheese");
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var me = new CheeseSauce();
+me.ingredients; // -&gt; ["butter", "flour", "milk", "cheese"]
+        </code></pre>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>General advice</h2>
+    </section>
+
+    <section>
+
+        <figure>
+            <img src="./telling-off.jpg">
+            <figcaption>Treat objects like little children</figcaption>
+        </figure>
+
+        <aside class="notes">
+            <p>4 rules that you can tell your objects to keep them in line.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <h3>1. Keep your hands to yourself!</h3>
+
+        <div class="fragment">
+
+            <p>Only call your own methods.</p>
+
+            <pre><code class="js" data-trim>
+var sauce = new WhiteSauce();
+
+// Good: only calling your own method.
+sauce.feel(); // -&gt; 20
+
+// Bad: calling another method.
+sauce.feel().toString(16); // -&gt; "14"
+            </code></pre>
+
+            <p class="fragment">Don't chain your methods unless the method returns <code>this</code> so you're constantly interacting with the same thing, jQuery style.</p>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>There are 2 ways to improve this. First, you can create a method that gives you the response you need.</p>
+
+        <pre><code class="js" data-trim>
+class WhiteSauce {
+
+    // ...
+
+    feelInHex() {
+        return this.temperature.toString(16);
+    }
+
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var sauce = new WhiteSauce("JLo");
+sauce.feelInHex(); // -&gt; "14"
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Option 2 is to pass a flag to the method that will modify the response.</p>
+
+        <pre><code class="js" data-trim>
+class WhiteSauce {
+    // ...
+    static get HEX() {
+        return 16;
+    }
+    feel(radix) {
+        var temperature = this.temperature;
+        if (radix) {
+            temperature = temperature.toString(radix);
+        }
+        return temperature;
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var sauce = new WhiteSauce("JLo");
+sauce.feel(WhiteSauce.HEX); // -&gt; "14"
+        </code></pre>
+
+        <aside class="notes">
+            <p><code>static get</code> is how to create a class constant in JavaScript.</p>
+            <p>It doesn't <em>have</em> to be a class constant but I <em>really</em> recommend that it is.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>If you have objects within your object, only call their methods.</p>
+
+        <pre><code class="js" data-trim>
+class WhiteSauce {
+    constructor(temperature) {
+        this.temperature = temperature;
+        // ...
+    }
+    feel() {
+        return this.temperature.celsius();
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var sauce = new WhiteSauce(new Temperature(20));
+sauce.feel(); // -&gt; 20
+        </code></pre>
+
+        <aside class="notes">
+            <p>If you're thinking "does that mean there's a 'fahrenheit' method?" then <strong>congratulations</strong> - you've just understood OOP.</p>
+        </aside>
+
+    </section>
+
+    <section>
+        <p>If your object <strong>keeps its hands to itself</strong> then we can change the way the object works (or how the data is stored) without having to change places where it was used.</p>
+    </section>
+
+    <section>
+
+        <h3>2. Ask, don't take!</h3>
+
+        <div class="fragment">
+
+            <p>Don't access properties, execute methods.</p>
+
+            <pre><code class="js" data-trim>
+var sauce = new WhiteSauce();
+
+// Good: executing a method.
+sauce.feel(); // -&gt; 20
+
+// Bad: accessing a property.
+sauce.temperature; // -&gt; 20
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>When JavaScript tries is told to access a property, it checks a few places in order:</p>
+        <ol>
+            <li>The object itself.</li>
+            <li>The object's <code>prototype</code>.</li>
+            <li>The object's parent's <code>prototype</code>.</li>
+            <li>The object's parent's parent's <code>prototype</code> ...</li>
+            <li><code>Object.prototype</code></li>
+        </ol>
+        <p class="fragment">If it gets all the way to <code>Object.prototype</code> and still can't find the property, it returns <code>undefined</code>.</p>
+
+        <aside class="notes">
+            <p>This is why deeply nested structures are really inefficient in JavaScript.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>A useful side effect of this is that we get a <code>TypeError</code> if we make a typo or access methods that were removed (or we forgot to write).</p>
+
+        <pre><code class="js" data-trim>
+var sauce = new WhiteSauce();
+
+sauce.temperaturee; // -&gt; undefined (Easy to mistake for 0)
+sauce.isOnHob; // -&gt; undefined (Easy to mistake for false)
+
+sauce.isCooking(); // TypeError: sauce.isCooking is not a function
+        </code></pre>
+
+        <p class="fragment"><q>Death before confusion</q> - <em>Douglas Crockford</em></p>
+
+    </section>
+
+    <section>
+        <p>If your object <strong>asks instead of taking</strong>, we know if we ever make a typo or use a method that was removed.</p>
+        <p>We can also do more complicated things in the background when we get information without having to change the rest of the code.</p>
+    </section>
+
+    <section>
+
+        <h3>3. Don't leave your toys lying around!</h3>
+
+        <div class="fragment">
+
+            <p>Don't modify other objects or the global scope.</p>
+            <p>You may also hear "<strong>play nice with others</strong>".</p>
+
+        </div>
+
+    </section>
+    <section>
+
+        <pre><code class="js" data-trim>
+// Good: everything contained.
+class WhiteSauce {
+
+    addPan(pan) {
+        this.pan = pan;
+        this.pan.add(this);
+    }
+
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+// Bad: telling the pan what to do.
+class WhiteSauce {
+
+    addPan(pan) {
+        this.pan = pan;
+        pan.contents = this;
+    }
+
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+        <p>If your objects <strong>don't leave their toys lying around</strong> then no-one will trip over them.</p>
+        <p>Your object won't override anything by mistake. We can also do more complex things behind the scenes when setting information.</p>
+        <p>We can also swap out the object for another one without affecting anything else - the object is fully self-contained.</p>
+    </section>
+
+    <section>
+
+        <h3>4. Don't talk to strangers!</h3>
+
+        <div class="fragment">
+
+            <p>Only interact with things you've been told about.</p>
+
+            <pre><code class="js" data-trim>
+// Good - doesn't talk to strangers.
+class WhiteSauce {
+    constructor(temperature) {
+        this.temperature = temperature;
+    }
+}
+var whiteSauce = new WhiteSauce(new Temperature(20));
+            </code></pre>
+            <pre><code class="js" data-trim>
+// Bad - talks to strangers.
+class WhiteSauce {
+    constructor(temperature) {
+        this.temperature = new Temperature(temperature);
+    }
+}
+var whiteSauce = new WhiteSauce(20);
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+        <p>If your object <strong>doesn't talk to strangers</strong> then we know what the object is interacting with. More importantly, we know where that interaction is happening.</p>
+        <p>We can change or remove a dependency without another object breaking because it relied on it.</p>
+    </section>
+
+    <section>
+        <ol>
+            <li>Keep your hands to yourself!</li>
+            <li>Ask, don't take!</li>
+            <li>Don't leave your toys lying around!</li>
+            <li>Don't talk to strangers!</li>
+        </ol>
+    </section>
+
+</section>
+
+<section id="questions">
+    <h1>Any questions?</h1>
+</section>
+
+    </div>
+</div>
+
+
+
+<script src="../reveal/lib/js/head.min.js"></script>
+<script src="../reveal/js/reveal.js"></script>
+<script>
+Reveal.configure({
+    pdfSeparateFragments: false,
+    pdfMaxPagesPerSlide: 1
+});
+Reveal.initialize({
+    dependencies: [
+        // Speaker notes.
+        {
+            src: "../reveal/plugin/notes/notes.js",
+            async: true
+        },
+        // Syntax highlighting.
+        {
+            src: "../reveal/plugin/highlight/highlight.js",
+            async: true,
+            callback: function () {
+                hljs.initHighlightingOnLoad();
+            }
+        },
+        // PDF printing.
+        {
+            src: "../reveal/plugin/print-pdf/print-pdf.js",
+            async: true
+        }
+    ]
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<title>Object Calisthenics</title>
+
+<link rel="stylesheet" href="../reveal/css/reveal.css">
+<link rel="stylesheet" href="../reveal/css/theme/black.css">
+<link rel="stylesheet" href="../reveal/lib/css/zenburn.css">
+<!-- <link rel="stylesheet" href="../custom.css"> -->
+<link rel="stylesheet" href="../reveal/css/print/pdf.css" media="print">
+
+<style>
+.reveal figure > img {
+    max-height: 50vh;
+}
+
+.reveal pre code {
+    max-height: 411px; /* 15 lines */
+}
+</style>
+
+</head>
+<body>
+
+<div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1>Object Calisthenics</h1>
+    <p>Exercises to super-charge your OOP skills.</p>
+</section>
+
+<!--
+What is the exercise?
+How to do it?
+-or-
+Why do it?
+How to do it?
+-->
+
+<section>
+
+    <section>
+        <h2>1. Only One Indent Level</h2>
+    </section>
+
+    <section>
+
+        <pre><code class="js" data-trim>
+class Thing {
+    constructor() {
+        // Indent level 1 :)
+        while (something) {
+            // ...
+        }
+    }
+}
+        </code></pre>
+
+        <pre><code class="js" data-trim>
+class Thing {
+    constructor() {
+        while (something) {
+            // Ident level 2 :(
+            if (query) {
+                // ...
+            }
+        }
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>This applies to anonymous function as well.</p>
+
+
+        <pre><code class="js" data-trim>
+class Table {
+    drawTable(table) {
+        let html = "&lt;table&gt;";
+        table.forEach(
+            (row) =&gt; /* Indent level 1 :) */
+        )
+        return html + "&lt;/table&gt;";
+    }
+}
+        </code></pre>
+
+        <pre><code class="js" data-trim>
+class Table {
+    drawTable(table) {
+        let html = "&lt;table&gt;";
+        table.forEach(
+            (row) =&gt; row.forEach(/* Indent level 2 :( */)
+        )
+        return html + "&lt;/table&gt;";
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Keeping to 1 indent level makes your code easier to follow because your function only does one thing.</p>
+
+        <pre><code class="js" data-trim>
+class Table {
+    drawTable(table) {
+        let html = "&lt;table&gt;";
+        table.forEach((row) =&gt; html += this.drawRow(row));
+        return html + "&lt;/table&gt;";
+    }
+    drawRow(row) {
+        let html = "&lt;tr&gt;";
+        row.forEach((cell) =&gt; html += this.drawCell(cell));
+        return html + "&lt;/tr&gt;";
+    }
+    drawCell(cell) {
+        return "&lt;td&gt;" + cell + "&lt;/td&gt;";
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>It also makes your code much easier to extend.</p>
+
+        <pre><code class="js" data-trim>
+class HeadingTable extends Table {
+    drawRow(row) {
+        let html = "&lt;tr&gt;";
+        row.forEach((cell, i) =&gt; html += this.decideType(cell, i));
+        return html + "&lt;/tr&gt;";
+    }
+    decideType(cell, i) {
+        return (
+            i === 0 ? this.drawHeading(cell) : this.drawCell(cell)
+        );
+    }
+    drawHeading(cell) {
+        return "&lt;th&gt;" + cell + "&lt;/th&gt;";
+    }
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>Also <code>if</code> statements inside an anonymous function count as an indent level.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>It makes code much easier to test and debug.</p>
+
+        <pre><code class="js" data-trim>
+describe("Table", () =&gt; {
+
+    let table;
+
+    beforeEach(() =&gt; table = new Table());
+
+    describe("drawCell", () =&gt; {
+        it("should return a string", () =&gt; {
+            chai.assert.isString(table.drawCell(""));
+            chai.assert.isString(table.drawCell(0));
+            // ...
+        });
+    });
+
+});
+        </code></pre>
+
+        <aside class="notes">
+            <p>Test suit is Mocha and Chai.</p>
+            <p>We don't do this here, but you should do it for personal projects.</p>
+        </aside>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>2. Don't Use <code>else</code></h2>
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>3. Wrap All Primitives and Strings</h2>
+    </section>
+
+    <section>
+        <p>Stop storing data in primitives. With a wrapped primitive we can easily see what the primitive represents.</p>
+        <!-- Url = string; ... = string -->
+    </section>
+
+    <section>
+
+        <pre><code class="js" data-trim>
+class Currency {
+    constructor(rawValue, taxRate = 20) {}
+    value() {}
+    withTax() {}
+    format(currencyCode = null) {}
+    formatWithTax(currencyCode = null) {}
+}
+        </code></pre>
+
+        <pre><code class="js" data-trim>
+let price = new Currency(1234.67);
+price.withTax(); // -&gt; 1481.472
+price.format(); // -&gt; "1,234.56"
+price.formatWithTax("GBP"); // -&gt; "£1,481.47"
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>If you're intending to use a lot of emoji in your string, it may go strange.</p>
+        <pre><code class="js">"💩".length === 2</code></pre>
+
+        <div class="fragment">
+            <p>Other times, it may not make as much sense as you expect.</p>
+            <pre><code class="js" data-trim>
+"'".length; // -&gt; 1
+"\'".length; // -&gt; 1
+"\\\'".length; // -&gt; 2
+            </code></pre>
+        </div>
+
+    </section>
+
+    <!--section>
+
+        <p>I was making a library to handle WAI-ARIA attributes. Originally I had a class to handle each element.</p>
+
+        <pre><code class="js" data-trim>
+class Element {
+    constructor(element) {}
+    prefix(attribute) {}
+    interpretString(mixed) {}
+    translate(attribute) {}
+    unprefix(attribute) {}
+    setAttribute(attribute, value) {}
+    getAttribute(attribute) {}
+    hasAttribute(attribute) {}
+    removeAttribute(attribute) {}
+    // ...
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>See how the attributes are all handled in the element class?</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>Instead, I separated out some of the functionality into separate classes.</p>
+
+        <p>This one handles the attribute name, coercing it into a string, prefixing it if necessary and translating it to help with typos.</p>
+
+        <pre><code class="js" data-trim>
+class Name {
+    static coerce(mixed) {}
+    static prefix(attribute) {}
+    static unprefix(attribute) {}
+    static translate(attribute) {}
+    static normalise(attribute) {}
+    constructor(rawName) {}
+    name() {}
+    toString() {}
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>The attribute value gets its own class (sub-classes handle different value types).</p>
+
+        <pre><code class="js" data-trim>
+class Value {
+    constructor(/* StringType */ value) {}
+    read() {}
+    write(value) {}
+    toString() {}
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+class StringType {
+    constructor() {}
+    read() {}
+    write(value) {}
+    toString() {}
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>The <code>Value</code> acts as an adapter for the <code>*Type</code> classes.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>The Attribute class just brings things together.</p>
+
+        <pre><code class="js" data-trim>
+class Attribute {
+    constructor(/* Name */ name, /* Value */ value) {}
+    update(value) {}
+    name() {
+        return this.name.toString();
+    }
+    toString() {
+        return `[${this.name()}="${this.value.toString()}"]`;
+    }
+    // ...
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+class AttributeList {
+    constructor() {}
+    add(/* Attribute */ attribute) {}
+    // ...
+}
+        </code></pre>
+
+    </section-->
+    <!-- NOTE: I haven't fully thought through what the new Element will be. -->
+
+    <!-- String, Number, Boolean, Null, Undefined -->
+
+</section>
+
+<section>
+
+    <section>
+        <h2>4. First Class Collections</h2>
+    </section>
+
+    <!-- Array, Object? -->
+
+    <section>
+
+        <p>Instead of keeping a collection of things in an array ...</p>
+        <pre><code class="js" data-trim>
+let elements = [];
+elements.push(document.getElementById("a"));
+elements.push(document.getElementById("b"));
+// ...
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>... create a collection class to manage them instead.</p>
+            <pre><code class="js" data-trim>
+class Collection {
+    constructor() {}
+    add(element) {}
+    size() {}
+    // ...
+}
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <!-- <p>As well as making it easier to skim-read the code surrounding the collection, you can customise the functionality and keep related functionality in the collection.</p> -->
+
+        <p>You can keep all your functionality in the new collection.</p>
+
+        <div class="fragment">
+            <p>For example, maybe you want to ensure that the collection only contains unique elements.</p>
+            <pre><code class="js" data-trim>
+class Collection {
+    // ...
+    includes(element) {
+        return this.list.includes(element);
+    }
+    add(element) {
+        if (!this.includes(element)) {
+            this.list.push(element);
+        }
+    }
+}
+            </code></pre>
+        </div>
+
+        <aside class="notes">
+            <p>Maybe you only want certain types of elements to be included?</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>Maybe you want to filter the elements sometimes.</p>
+
+        <pre><code class="js" data-trim>
+// Before:
+let filtered = elements.filter((el) => el.matches(".my-class"));
+
+// After:
+let filtered = collection.filter(".my-class");
+        </code></pre>
+
+        <pre class="fragment"><code class="js" data-trim>
+// Or even:
+let filtered = collection.flagged();
+        </code></pre>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>5. One Dot per Line</h2>
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>6. Don't Abbreviate</h2>
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>7. Keep All Entities Small</h2>
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>8. No More than Two Constructor Parameters</h2>
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>9. No Getters, Setters or Properties</h2>
+    </section>
+
+    <section>
+
+        <p>Getters and setters don't tell you anything about the object.</p>
+
+        <pre><code class="js" data-trim>
+class Score {
+    constructor() {
+        this.score = 0;
+    }
+    setScore(score) {
+        this.score = score;
+    }
+    getScore() {
+        return this.score;
+    }
+}
+        </code></pre>
+
+        <pre><code class="js" data-trim>
+let score = new Score();
+score.setScore(score.getScore() + 1);
+score.getScore(); // -&gt; 1
+        </code></pre>
+
+        <aside class="notes">
+            <p>You're at the mercy of <code>setScore</code> getting a number.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>Compare that example to this one.</p>
+
+        <pre><code class="js" data-trim>
+class Score {
+    constructor() {
+        this.score = 0;
+    }
+    increase() {
+        this.score += 1;
+    }
+    announce() {
+        return this.score;
+    }
+}
+        </code></pre>
+
+        <pre><code class="js" data-trim>
+let score = new Score();
+score.increase();
+score.announce(); // -&gt; 1
+        </code></pre>
+
+        <aside class="notes">
+            <p>Presumably there's a <code>decrease</code> method as well.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>Remember the cooking examples from the first talk?</p>
+
+        <pre><code class="js" data-trim>
+class Temperature {
+    constructor(temperature) {
+        this.temperature = temperature;
+    }
+    celsius(format) {
+        return this.temperature;
+    }
+    fahrenheit(format) {
+        return this.temperature * (9 / 5) + 32;
+    }
+}
+        </code></pre>
+
+        <pre><code class="js" data-trim>
+let temperature = new Temperature(20);
+temperature.celsius(); // -&gt; 20
+temperature.fahrenheit(); // -&gt; 68
+        </code></pre>
+
+    </section>
+
+</section>
+
+
+
+<section id="questions">
+    <h1>Any questions?</h1>
+</section>
+
+    </div>
+</div>
+
+
+
+<script src="../reveal/lib/js/head.min.js"></script>
+<script src="../reveal/js/reveal.js"></script>
+<script>
+Reveal.configure({
+    pdfSeparateFragments: false,
+    pdfMaxPagesPerSlide: 1
+});
+Reveal.initialize({
+    dependencies: [
+        // Speaker notes.
+        {
+            src: "../reveal/plugin/notes/notes.js",
+            async: true
+        },
+        // Syntax highlighting.
+        {
+            src: "../reveal/plugin/highlight/highlight.js",
+            async: true,
+            callback: function () {
+                hljs.initHighlightingOnLoad();
+            }
+        },
+        // PDF printing.
+        {
+            src: "../reveal/plugin/print-pdf/print-pdf.js",
+            async: true
+        }
+    ]
+});
+</script>
+
+</body>
+</html>

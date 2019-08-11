@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<title>Design Patterns</title>
+
+<link rel="stylesheet" href="../reveal/css/reveal.css">
+<link rel="stylesheet" href="../reveal/css/theme/black.css">
+<link rel="stylesheet" href="../reveal/lib/css/zenburn.css">
+<!-- <link rel="stylesheet" href="../custom.css"> -->
+<link rel="stylesheet" href="../reveal/css/print/pdf.css" media="print">
+
+<style>
+.reveal figure > img {
+    max-height: 50vh;
+}
+
+.reveal pre code {
+    max-height: 411px; /* 15 lines */
+}
+</style>
+
+</head>
+<body>
+
+<div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1>Design Patterns</h1>
+    <p>Common OOP patterns.</p>
+</section>
+
+<section>
+
+    <section>
+
+<style>
+.boxes {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+}
+
+.box {
+    font-size: 0.5em;
+    text-align: left;
+}
+
+.box .box__list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.books {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+}
+
+.book {
+    font-size: 0.5em;
+}
+
+.reveal .book > img {
+    max-height: 15vh;
+}
+</style>
+
+        <div class="boxes">
+            <div class="box">
+                <h2 class="box__title">Creational</h2>
+                <ul class="box__list">
+                    <li>Abstract factory</li>
+                    <li>Builder</li>
+                    <li class="highlight-red" data-fragment="#pro-js-dp">Factory</li>
+                    <li>Prototype</li>
+                    <li>Singleton</li>
+                </ul>
+            </div>
+            <div class="box">
+                <h2 class="box__title">Structural</h2>
+                <ul class="box__list" class="highlight-red" data-fragment="#pro-js-dp">
+                    <li>Adapter</li>
+                    <li>Bridge</li>
+                    <li>Composite</li>
+                    <li>Decorator</li>
+                    <li>Facade</li>
+                    <li>Flyweight</li>
+                    <li>Proxy</li>
+                </ul>
+            </div>
+            <div class="box">
+                <h2 class="box__title">Behavioural</h2>
+                <ul class="box__list">
+                    <li class="highlight-red" data-fragment="#pro-js-dp">Chain of responsibility</li>
+                    <li class="highlight-red" data-fragment="#pro-js-dp">Command</li>
+                    <li>Interpreter</li>
+                    <li>Iterator</li>
+                    <li>Mediator</li>
+                    <li>Memento</li>
+                    <li class="highlight-red" data-fragment="#pro-js-dp">Observer</li>
+                    <li>State</li>
+                    <li>Strategy</li>
+                    <li>Template method</li>
+                    <li>Visitor</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="books">
+
+            <figure class="book">
+                <img src="./design-patterns-book.jpg">
+                <figcaption>Design Patterns</figcaption>
+            </figure>
+
+            <figure class="book // fragment" id="pro-js-dp">
+                <img src="./pro-js-design-patterns-book.jpg">
+                <figcaption>Pro JavaScript Design Patterns</figcaption>
+            </figure>
+
+        </div>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>Composite Pattern</h2>
+    </section>
+
+    <section>
+
+    </section>
+
+</section>
+
+<!--
+Decorator Pattern.
+Composite Pattern.
+Adapter Pattern.
+Observer Pattern. (but in OOP ...)
+Factory Pattern. (it's mentioned a load of times ...)
+-->
+
+
+
+<section id="questions">
+    <h1>Any questions?</h1>
+</section>
+
+    </div>
+</div>
+
+
+
+<script src="../reveal/lib/js/head.min.js"></script>
+<script src="../reveal/js/reveal.js"></script>
+<script>
+Reveal.configure({
+    pdfSeparateFragments: false,
+    pdfMaxPagesPerSlide: 1
+});
+Reveal.initialize({
+    dependencies: [
+        // Speaker notes.
+        {
+            src: "../reveal/plugin/notes/notes.js",
+            async: true
+        },
+        // Syntax highlighting.
+        {
+            src: "../reveal/plugin/highlight/highlight.js",
+            async: true,
+            callback: function () {
+                hljs.initHighlightingOnLoad();
+            }
+        },
+        // PDF printing.
+        {
+            src: "../reveal/plugin/print-pdf/print-pdf.js",
+            async: true
+        }
+    ]
+});
+
+var fragSelectors = Array.prototype.reduce.call(
+    document.querySelectorAll("[data-fragment]"),
+    function (unique, el) {
+
+        if (!unique.includes(el.dataset.fragment)) {
+            unique.push(el.dataset.fragment);
+        }
+
+        return unique;
+
+    },
+    []
+);
+Reveal.addEventListener("fragmentshown", function (e) {
+
+    var fragment = e.fragment;
+
+    fragSelectors.forEach(function (fragSelector) {
+
+        if (fragment.matches(fragSelector)) {
+
+            document.querySelectorAll("[data-fragment=\"" + fragSelector + "\"]").forEach(function (frag) {
+                frag.classList.add("visible");
+            });
+
+        }
+
+    });
+
+});
+</script>
+
+</body>
+</html>

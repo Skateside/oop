@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<title>Introduction</title>
+
+<link rel="stylesheet" href="../reveal/css/reveal.css">
+<link rel="stylesheet" href="../reveal/css/theme/black.css">
+<link rel="stylesheet" href="../reveal/lib/css/zenburn.css">
+<!-- <link rel="stylesheet" href="./custom.css"> -->
+<link rel="stylesheet" href="../reveal/css/print/pdf.css" media="print">
+
+<style>
+.reveal figure > img {
+    max-height: 50vh;
+}
+
+.reveal pre code {
+    max-height: 411px; /* 15 lines */
+}
+</style>
+
+</head>
+<body>
+
+<div class="reveal">
+    <div class="slides">
+
+<section>
+
+    <h1>Introduction to Object Oriented Programming</h1>
+    <p>A basic overview to help you understand OOP in JavaScript.</p>
+
+    <aside class="notes">
+        <p>I'm trying to explain OOP mentality not just syntax.</p>
+        <p>Next week: design patterns. Week after: object calisthenics.</p>
+    </aside>
+
+</section>
+
+<section id="questions">
+    <h1>Any questions?</h1>
+</section>
+
+    </div>
+</div>
+
+
+
+<script src="../reveal/lib/js/head.min.js"></script>
+<script src="../reveal/js/reveal.js"></script>
+<script>
+Reveal.configure({
+    pdfSeparateFragments: false,
+    pdfMaxPagesPerSlide: 1
+});
+Reveal.initialize({
+    dependencies: [
+        // Speaker notes.
+        {
+            src: "../reveal/plugin/notes/notes.js",
+            async: true
+        },
+        // Syntax highlighting.
+        {
+            src: "../reveal/plugin/highlight/highlight.js",
+            async: true,
+            callback: function () {
+                hljs.initHighlightingOnLoad();
+            }
+        },
+        // PDF printing.
+        {
+            src: "../reveal/plugin/print-pdf/print-pdf.js",
+            async: true
+        }
+    ]
+});
+</script>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-function makeIterator(iterable) {
+function Iterator(iterable = []) {
 
     let index = 0;
     let length = iterable.length;
@@ -15,11 +15,10 @@ function makeIterator(iterable) {
 
             index += 1;
 
-            return Object.freeze(
-                index > length
-                ? { done: true }
-                : { done: false, value }
-            );
+            return Object.freeze({
+                value,
+                done: index > length
+            });
 
         }
 
@@ -43,11 +42,10 @@ class Iterator {
 
         this.index += 1;
 
-        return Object.freeze(
-            this.index > this.length
-            ? { done: true }
-            : { done: false, value }
-        );
+        return Object.freeze({
+            value,
+            done: this.index > this.length
+        });
 
     }
 

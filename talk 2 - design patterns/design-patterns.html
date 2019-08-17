@@ -23,6 +23,8 @@
     <p>Common OOP patterns.</p>
 </section>
 
+<!-- What is a design pattern? -->
+
 <section>
 
     <section>
@@ -136,23 +138,298 @@
 <section>
 
     <section>
+        <h2>Iterator Pattern</h2>
+    </section>
+
+    <section>
+
+        <p>The iterator pattern exposes elements of an object sequentially without exposing the underlying data structure.</p>
+
+        <aside class="notes">
+            <p>It's, like, <em>way</em> cooler than it sounds.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>The key part of an Iterator is the <code>next</code> method which returns an object.</p>
+
+        <pre><code class="js" data-trim>
+class Iterator {
+    constructor(iterable = []) {
+        this.index = 0;
+        this.length = iterable.length;
+        this.iterable = iterable;
+    }
+    next() {
+        let value = this.iterable[this.index];
+        this.index += 1;
+        return Object.freeze({
+            value,
+            done: this.index > this.length
+        });
+    }
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>A "Crockford Classless" version of this wouldn't expose the properties at all.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>The <code>next</code> method will return the value and whether or not the loop is complete.</p>
+        <p>The final entry shouldn't have a value - any value will be ignored.</p>
+
+        <pre><code class="js" data-trim>
+let iterator = new Iterator(["one", "two", "three"]);
+iterator.next(); // -&gt; { value: "one", done: false }
+iterator.next(); // -&gt; { value: "two", done: false }
+iterator.next(); // -&gt; { value: "three", done: false }
+iterator.next(); // -&gt; { value: undefined, done: true }
+        </code></pre>
+
+        <aside class="notes">
+            <p>I know what you're thinking: why not just loop over an array?</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>Have you heard of a <code>for...of</code> loop?</p>
+
+        <pre><code class="js" data-trim>
+for (let item of ["one", "two", "three"]) {
+    console.log(item);
+}
+// Logs: "one"
+// Logs: "two"
+// Logs: "three"
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>JavaScript allows you to define custom functionality for that using the <code>Symbol.iterator</code> method.</p>
+            <p>That method needs to return an iterator.</p>
+
+        </div>
+
+        <pre class="fragment"><code class="js" data-trim>
+class Iterator {
+    // ...
+    [Symbol.iterator]() {
+        return this;
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <pre><code class="js" data-trim>
+let iterator = new Iterator(["one", "two", "three"]);
+
+for (let item of iterator) {
+    console.log(item);
+}
+
+// Logs: "one"
+// Logs: "two"
+// Logs: "three"
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>It also activates JavaScript's spread operator.</p>
+
+            <pre><code class="js" data-trim>
+[...iterator]; // -&gt; ["one", "two", "three"]
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>An Iterator allows the items to be converted while being looped over without revealing that information.</p>
+
+        <pre><code class="js" data-trim>
+class Name {
+    constructor(name) { this.name = name; }
+    setAlias(alias) { this.alias = alias; }
+    getName() { return this.alias || this.name; }
+}
+
+class Employees extends Iterator {
+    next() {
+        let value = this.iterable[this.index].getName();
+        // ...
+    }
+}
+        </code></pre>
+    </section>
+    <section>
+
+        <p>As far as our loop knows, we just have an array of strings.</p>
+
+        <pre><code class="js" data-trim>
+let mark = new Name("Mark");
+let james = new Name("James");
+let jlo = new Name("James");
+jlo.setAlias("JLo");
+
+let employees = new Employees([mark, james, jlo])
+
+for (let employee of employees) {
+    console.log(employee);
+}
+
+// Logs: "Mark"
+// Logs: "James"
+// Logs: "JLo"
+        </code></pre>
+
+        <aside class="notes">
+            <p>If we need to do something like HTML-entities -&gt; UTF-8 or enforce capitalisation, it won't polute the array.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>An Iterator can not only abstract the data that it's serving, it can abstract the underlying data structure as well.</p>
+        <p>We've been using an array but it could also be an object ... <span class="fragment">or nothing at all.</span></p>
+
+    </section>
+
+    <section>
+
+        <pre><code class="js" data-trim>
+class Range extends Iterator {
+    constructor(start, end) {
+        super();
+        this.start = start;
+        this.length = end - start;
+    }
+    next() {
+        this.iterable[this.index] = this.start;
+        this.start += 1;
+        return super.next();
+    }
+}
+        </code></pre>
+
+        <pre><code class="js" data-trim>
+for (let number of new Range(1, 5)) {
+    console.log(number);
+}
+
+// Logs: 1
+// Logs: 2
+// Logs: 3
+// Logs: 4
+        </code></pre>
+
+        <aside class="notes">
+            <p>Here's an Iterator that doesn't populate its data until it needs to.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>If this interests you, JavaScript also has generators to simpliy iterators.</p>
+
+        <pre><code class="js" data-trim>
+let iterable = {
+    *[Symbol.iterator]() {
+        yield "one";
+        yield "two";
+        yield "three";
+    }
+}
+
+for (let value of iterable) {
+    console.log(value);
+}
+
+// Logs: "one"
+// Logs: "two"
+// Logs: "three"
+        </code></pre>
+
+        <aside class="notes">
+            <p>There are precious few times you can use this, but when you get the chance it's cool as hell.</p>
+        </aside>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
         <h2>Composite Pattern</h2>
     </section>
 
     <section>
+
+        <p>The Composite pattern takes zero-or-more similar objects and treats them as one object.</p>
+
+        <figure class="fragment">
+            <img src="./branch-leaves.png" alt="" class="mini-image">
+            <figcaption>It does this by having "branches" that contain objects and "leaves" which are the objects.</figcaption>
+        </figure>
+
+    </section>
+
+    <section>
+
+        <p>In abstract terms, it looks like this.</p>
+
+        <pre><code class="js" data-trim>
+class Branch {
+    constructor() { this.nodes = []; }
+    addNode(node) { this.nodes.push(node); }
+    doSomething() { this.nodes.forEach((o) => o.doSomething()); }
+}
+
+class Leaf {
+    doSomething() {/* ... */}
+}
+        </code></pre>
+
+        <p>The important thing is that either a <code>Branch</code> or a <code>Leaf</code> can be passed to <code>addNode</code>.</p>
+
+    </section>
+
+    <section>
+
+        <form class="o-pack">
+            <input type="number">
+            <input type="number">
+            <input type="number">
+            <button type="submit">Generate</button>
+        </form>
 
     </section>
 
 </section>
 
 <!--
-Decorator Pattern.
-Composite Pattern.
-Adapter Pattern.
-Observer Pattern. (but in OOP ...)
-Factory Pattern. (it's mentioned a load of times ...)
-Iterator Pattern. (https://en.wikipedia.org/wiki/Iterator_pattern)
-Singleton Pattern.
+    Decorator Pattern.
+    Composite Pattern.
+    Adapter Pattern.
+    Observer Pattern. (but in OOP ...)
+    Factory Pattern. (it's mentioned a load of times ...)
+*   Iterator Pattern. (https://en.wikipedia.org/wiki/Iterator_pattern)
+    Singleton Pattern.
 -->
 
 

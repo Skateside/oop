@@ -9,18 +9,8 @@
 <link rel="stylesheet" href="../reveal/css/reveal.css">
 <link rel="stylesheet" href="../reveal/css/theme/black.css">
 <link rel="stylesheet" href="../reveal/lib/css/zenburn.css">
-<!-- <link rel="stylesheet" href="../custom.css"> -->
+<link rel="stylesheet" href="../custom.css">
 <link rel="stylesheet" href="../reveal/css/print/pdf.css" media="print">
-
-<style>
-.reveal figure > img {
-    max-height: 50vh;
-}
-
-.reveal pre code {
-    max-height: 411px; /* 15 lines */
-}
-</style>
 
 </head>
 <body>
@@ -38,6 +28,18 @@
     <section>
 
 <style>
+.display {
+    transition: all .2s ease;
+}
+
+.display-blue {
+    color: #1b91ff;
+}
+
+.display-green {
+    color: #17ff2e;
+}
+
 .boxes {
     display: flex;
     flex-flow: row nowrap;
@@ -76,33 +78,33 @@
                 <ul class="box__list">
                     <li>Abstract factory</li>
                     <li>Builder</li>
-                    <li class="highlight-red" data-fragment="#pro-js-dp">Factory</li>
+                    <li class="js--fragment--one js--fragment--two // display">Factory</li>
                     <li>Prototype</li>
-                    <li>Singleton</li>
+                    <li class="js--fragment--one js--fragment--two // display">Singleton</li>
                 </ul>
             </div>
             <div class="box">
                 <h2 class="box__title">Structural</h2>
-                <ul class="box__list" class="highlight-red" data-fragment="#pro-js-dp">
-                    <li>Adapter</li>
-                    <li>Bridge</li>
-                    <li>Composite</li>
-                    <li>Decorator</li>
-                    <li>Facade</li>
-                    <li>Flyweight</li>
-                    <li>Proxy</li>
+                <ul class="box__list">
+                    <li class="js--fragment--one js--fragment--two // display">Adapter</li>
+                    <li class="js--fragment--one // display">Bridge</li>
+                    <li class="js--fragment--one js--fragment--two // display">Composite</li>
+                    <li class="js--fragment--one js--fragment--two // display">Decorator</li>
+                    <li class="js--fragment--one // display">Facade</li>
+                    <li class="js--fragment--one // display">Flyweight</li>
+                    <li class="js--fragment--one // display">Proxy</li>
                 </ul>
             </div>
             <div class="box">
                 <h2 class="box__title">Behavioural</h2>
                 <ul class="box__list">
-                    <li class="highlight-red" data-fragment="#pro-js-dp">Chain of responsibility</li>
-                    <li class="highlight-red" data-fragment="#pro-js-dp">Command</li>
+                    <li class="js--fragment--one // display">Chain of responsibility</li>
+                    <li class="js--fragment--one // display">Command</li>
                     <li>Interpreter</li>
-                    <li>Iterator</li>
+                    <li class="js--fragment--two // display">Iterator</li>
                     <li>Mediator</li>
                     <li>Memento</li>
-                    <li class="highlight-red" data-fragment="#pro-js-dp">Observer</li>
+                    <li class="js--fragment--one js--fragment--two // display">Observer</li>
                     <li>State</li>
                     <li>Strategy</li>
                     <li>Template method</li>
@@ -115,15 +117,17 @@
 
             <figure class="book">
                 <img src="./design-patterns-book.jpg">
-                <figcaption>Design Patterns</figcaption>
+                <figcaption>Design Patterns (1994)</figcaption>
             </figure>
 
             <figure class="book // fragment" id="pro-js-dp">
                 <img src="./pro-js-design-patterns-book.jpg">
-                <figcaption>Pro JavaScript Design Patterns</figcaption>
+                <figcaption>Pro JavaScript Design Patterns (2008)</figcaption>
             </figure>
 
         </div>
+
+        <div class="fragment" id="this-talk"></div>
 
     </section>
 
@@ -147,6 +151,8 @@ Composite Pattern.
 Adapter Pattern.
 Observer Pattern. (but in OOP ...)
 Factory Pattern. (it's mentioned a load of times ...)
+Iterator Pattern. (https://en.wikipedia.org/wiki/Iterator_pattern)
+Singleton Pattern.
 -->
 
 
@@ -160,7 +166,7 @@ Factory Pattern. (it's mentioned a load of times ...)
 
 
 
-<script src="../reveal/lib/js/head.min.js"></script>
+<!-- <script src="../reveal/lib/js/head.min.js"></script> -->
 <script src="../reveal/js/reveal.js"></script>
 <script>
 Reveal.configure({
@@ -190,6 +196,7 @@ Reveal.initialize({
     ]
 });
 
+/*
 var fragSelectors = Array.prototype.reduce.call(
     document.querySelectorAll("[data-fragment]"),
     function (unique, el) {
@@ -213,6 +220,52 @@ Reveal.addEventListener("fragmentshown", function (e) {
 
             document.querySelectorAll("[data-fragment=\"" + fragSelector + "\"]").forEach(function (frag) {
                 frag.classList.add("visible");
+            });
+
+        }
+
+    });
+
+});
+*/
+
+var colourFrags = [
+    {
+        check: "#pro-js-dp",
+        find: ".js--fragment--one",
+        className: "display-blue"
+    },
+    {
+        check: "#this-talk",
+        find: ".js--fragment--two",
+        className: "display-green"
+    }
+];
+
+Reveal.addEventListener("fragmentshown", ({ fragment }) => {
+
+    colourFrags.forEach(({ check, find, className }) => {
+
+        if (fragment.matches(check)) {
+
+            document.querySelectorAll(find).forEach(function (el) {
+                el.classList.add(className);
+            });
+
+        }
+
+    });
+
+});
+
+Reveal.addEventListener("fragmenthidden", ({ fragment }) => {
+
+    colourFrags.forEach(({ check, find, className }) => {
+
+        if (fragment.matches(check)) {
+
+            document.querySelectorAll(find).forEach(function (el) {
+                el.classList.remove(className);
             });
 
         }

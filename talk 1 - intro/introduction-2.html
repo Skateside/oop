@@ -9,18 +9,8 @@
 <link rel="stylesheet" href="../reveal/css/reveal.css">
 <link rel="stylesheet" href="../reveal/css/theme/black.css">
 <link rel="stylesheet" href="../reveal/lib/css/zenburn.css">
-<!-- <link rel="stylesheet" href="./custom.css"> -->
+<link rel="stylesheet" href="../custom.css">
 <link rel="stylesheet" href="../reveal/css/print/pdf.css" media="print">
-
-<style>
-.reveal figure > img {
-    max-height: 50vh;
-}
-
-.reveal pre code {
-    max-height: 411px; /* 15 lines */
-}
-</style>
 
 </head>
 <body>
@@ -40,6 +30,1520 @@
 
 </section>
 
+<section>
+
+    <section>
+        <h2>What is OOP?</h2>
+    </section>
+
+    <section>
+        <p>Object Oriented Programming (OOP) is a coding paradigm focusing on creating objects.</p>
+        <div class="fragment">
+            <p>It has 4 key concepts:</p>
+            <ul>
+                <li>Abstraction</li>
+                <li>Encapsulation</li>
+                <li>Inheritance</li>
+                <li>Polymorphism</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+
+        <h3>Abstraction</h3>
+        <p>The exposing of high-level mechanisms rather than inner workings.</p>
+
+        <div class="fragment">
+
+            <pre><code class="js" data-trim>
+let carousel = new Carousel();
+carousel.render();
+            </code></pre>
+
+            <p>The <code>render</code> method actually hides some elements and shows others by triggering events on those elements.</p>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <h3>Encapsulation</h3>
+        <p>Keeping properties private and only interacting with behaviours.</p>
+
+        <div class="fragment">
+
+            <pre><code class="js" data-trim>
+let carousel = new Carousel();
+carousel.next();
+            </code></pre>
+
+            <p>The <code>next</code> method works out which elements to show based on internal <code>start</code> and <code>page</code> properties.</p>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <h3>Inheritance</h3>
+        <p>Sharing common features and functions between objects.</p>
+
+        <div class="fragment">
+
+            <pre><code class="js" data-trim>
+let observer = new Observer();
+observer.dispatchEvent("my-event");
+
+class Carousel extends Observer { /* ... */ }
+
+let carousel = new Carousel();
+carousel.dispatchEvent("my-event");
+            </code></pre>
+
+            <p><code>Carousel</code> gets the <code>dispatchEvent</code> method from <code>Observer</code> so we don't have to re-write it.</p>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <h3>Polymorphism</h3>
+        <p>Objects can take many forms.</p>
+
+        <div class="fragment">
+
+            <pre><code class="js" data-trim>
+carousel instanceof Carousel; // true
+carousel instanceof Observer; // true
+carousel instanceof Object; // true
+            </code></pre>
+
+            <p>Because of these many forms, we can interact with <code>carousel</code> however we need to.</p>
+
+        </div>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>A code demo</h2>
+    </section>
+
+    <section>
+
+        <h3>A very basic carousel</h3>
+
+        <div class="carousel">
+            <button type="button" class="carousel__button" id="prev" disabled>&lt;- Previous</button>
+            <button type="button" class="carousel__button" id="next">Next -&gt;</button>
+
+            <div class="carousel__item">Item 1</div>
+            <div class="carousel__item">Item 2</div>
+            <div class="carousel__item">Item 3</div>
+            <div class="carousel__item" hidden>Item 4</div>
+            <div class="carousel__item" hidden>Item 5</div>
+            <div class="carousel__item" hidden>Item 6</div>
+            <div class="carousel__item" hidden>Item 7</div>
+        </div>
+
+    </section>
+
+    <section>
+
+        <h3>Functional style</h3>
+
+        <pre><code class="js" data-trim>
+let start = 0;
+let page = 3;
+
+let items = [...document.querySelectorAll(".carousel__item")];
+let visible = items.slice(start, page);
+
+let next = document.getElementById("next");
+let prev = document.getElementById("prev");
+        </code></pre>
+
+        <aside class="notes">
+            <p>We start with some variables and elements.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <pre><code class="js" data-trim>
+next.addEventListener("click", function () {
+
+    start += page;
+    visible.forEach((el) => el.hidden = true);
+    visible = items.slice(start, start + page);
+    visible.forEach((el) => el.hidden = false);
+    prev.disabled = false;
+
+    if (start + page >= items.length) {
+        next.disabled = true;
+    }
+
+});
+        </code></pre>
+
+        <aside class="notes">
+            <p>We then work out what the buttons are supposed to do.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <pre><code class="js" data-trim>
+prev.addEventListener("click", function () {
+
+    start = Math.max(start - page, 0);
+    visible.forEach((el) => el.hidden = true);
+    visible = items.slice(start, start + page);
+    visible.forEach((el) => el.hidden = false);
+    next.disabled = false;
+
+    if (start === 0) {
+        prev.disabled = true;
+    }
+
+});
+        </code></pre>
+
+        <aside class="notes">
+            <p>This is really basic, but it's enough to make that carousel work.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <h3>Object Oriented style</h3>
+
+        <pre><code class="js" data-trim>
+class Observer {
+    constructor() {}
+    addEventListener() {}
+    removeEventListener() {}
+    createEvent() {}
+    dispatchEvent() {}
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+class Carousel extends Observer {
+    constructor(items) {
+        super();
+        this.items = items;
+        this.start = 0;
+        this.page = 3;
+    }
+    // ...
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>We start with an observer and some basic properties.</p>
+            <p>The observer is useful when we start hooking things up. Also Single Responsibility Principle (SRP).</p>
+            <p>I'll explain how the <code>Observer</code> works next week.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <pre><code class="js" data-trim>
+class Carousel extends Observer {
+    // ...
+    hideAll() {
+        this.items
+            .forEach((it) => this.dispatchEvent("hide-item", it));
+    }
+    showVisible() {
+        this.items
+            .slice(this.start, this.start + this.page)
+            .forEach((it) => this.dispatchEvent("show-item", it));
+    }
+    // ...
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>We add some functionality to show and hide items.</p>
+            <p>We're not actually showing/hiding anything here, we just saying that we should. That'll be important later.</p>
+            <p>The observer handles the events so we don't have to.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <pre><code class="js" data-trim>
+class Carousel extends Observer {
+    // ...
+    render() {
+        this.hideAll();
+        this.showVisible();
+        this.dispatchEvent("render");
+    }
+    pageSize(size) {
+        this.page = size;
+        this.render();
+    }
+    // ...
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>We allow the carousel to render and allow ourselves a way of changing the page size.</p>
+            <p>You could just change the <code>page</code> property but don't do this - I'll explain why later on.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <pre><code class="js" data-trim>
+class Carousel extends Observer {
+    // ...
+    next() {
+        this.start += this.page;
+        this.render();
+        if (this.start + this.page >= this.items.length) {
+            this.dispatchEvent("end");
+        }
+    }
+    // ...
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+class Carousel extends Observer {
+    // ...
+    prev() {
+        this.start = Math.max(this.start - this.page, 0);
+        this.render();
+        if (this.start === 0) {
+            this.dispatchEvent("start");
+        }
+    }
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>We then need the functionality for the next and previous buttons.</p>
+            <p>Remember that the <code>render</code> method dispatches an event and that "start"/"end" events dispatch afterwards.</p>
+            <p>This doesn't do anything yet - we still need to activate it.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <pre><code class="js" data-trim>
+let items = [...document.querySelectorAll(".carousel__item")];
+let next = document.getElementById("next");
+let prev = document.getElementById("prev");
+let carousel = new Carousel(items);
+        </code></pre>
+        <pre><code class="js" data-trim>
+prev.addEventListener("click", () => carousel.prev());
+next.addEventListener("click", () => carousel.next());
+        </code></pre>
+        <pre><code class="js" data-trim>
+carousel.addEventListener(
+    "hide-item",
+    ({ detail }) => detail.hidden = true
+);
+carousel.addEventListener(
+    "show-item",
+    ({ detail }) => detail.hidden = false
+);
+carousel.addEventListener("render", () => {
+    prev.disabled = false;
+    next.disabled = false;
+});
+carousel.addEventListener("start", () => prev.disabled = true);
+carousel.addEventListener("end", () => next.disabled = true);
+        </code></pre>
+
+        <aside class="notes">
+            <p>Finally, we hook everything up.</p>
+            <p>Notice how we make elements hidden through events. This way we could use classes and/or WAI-ARIA attributes or remove hidden elements from the DOM.</p>
+            <p>Interface is whatever we want - we can add keyboard or swipe interactions by calling carousel methods.</p>
+            <p>We could add a window resize to call <code>pageSize</code> if we wanted to make the carousel responsive.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <h3>Functional style verses OOP</h3>
+
+        <div class="o-pack">
+            <figure class="o-stack">
+                <div class="o-stack__full">
+                    <img src="./deedee.png" alt="">
+                </div>
+                <figcaption>Functional style: "Ooh - what does this button do?"</figcaption>
+            </figure>
+            <figure class="o-stack">
+                <div class="o-stack__full">
+                    <img src="./dexter.webp" alt="">
+                </div>
+                <figcaption>OOP: building the device and later adding buttons.</figcaption>
+            </figure>
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>OOP requires more writing but it's a lot more flexible.</p>
+        <p class="fragment">Whereas functional programming is about verbs (<code>changePage()</code>, <code>increaseScore()</code> etc.), OOP concerns nouns (<code>Book</code>, <code>Scoreboard</code> etc.)</p>
+
+    </section>
+
+    <section>
+
+        <p>Other OOP advantages are the ability to separate out work with a team.</p>
+        <p>If your objects only do one thing but you know know how to do that, you can ask someone to do it for you.</p>
+
+        <p class="fragment">OOP has shaped programming for decades. Once you understand it, you'll see similar techniques in other places (such as CSS).</p>
+
+        <aside class="notes">
+            <p>"Someone" might have been you six months ago.</p>
+        </aside>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>Basic code comprehension</h2>
+    </section>
+
+    <section>
+
+        <h3>What does OOP look like in JavaScript?</h3>
+
+        <pre class="fragment"><code class="js" data-trim>
+var object = {};
+        </code></pre>
+
+        <pre class="fragment"><code class="js" data-trim>
+function objectMaker() {
+    return {};
+}
+
+var object = objectMaker();
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <h3>Objects in more detail</h3>
+
+        <p class="fragment">If functions are verbs (do this, draw that, walk over there) an object is a noun (and your classes are noun-makers).</p>
+
+        <pre class="fragment"><code class="js" data-trim>
+var carousel = {
+
+    items: [/* &lt;div&gt;, &lt;div&gt;, &lt;div&gt; ... */],
+
+    hideAll: function () {
+        this.items.forEach(/* ... */);
+    }
+
+};
+        </code></pre>
+
+        <aside class="notes">
+            <p>I'll come back to the <code>this</code> keyword later on.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <p>ES6 removes some of the necessary syntax.</p>
+
+        <pre><code class="js" data-trim>
+var carousel = {
+
+    items: [/* &lt;div&gt;, &lt;div&gt;, &lt;div&gt; ... */],
+
+    hideAll() {
+        this.items.forEach(/* ... */);
+    }
+
+};
+        </code></pre>
+
+        <aside class="notes">
+            <p>See the comma at the end of the array. We need it with objects, we don't need it with <code>class</code>.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <p>The object (<code>carousel</code>) has a "property" or "information" (<code>items</code>) and a "method" or "behaviour" (<code>hideAll</code>).</p>
+
+        <pre class="fragment"><code class="js" data-trim>
+// Dot syntax works when the only contains letters, numbers and
+// underscores. (but it can't start with a number)
+carousel.hideAll();
+
+// Square bracket syntax allows you to pass in a string which
+// doesn't need to conform to the rules above.
+carousel["hideAll"]();
+var method = "hideAll";
+carousel[method]();
+        </code></pre>
+
+        <aside class="notes">
+            <p>Fun fact: the thing inside the square brackets is automatically converted into a string.</p>
+        </aside>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+
+        <h2>JavaScript's Prototypal Model</h2>
+
+        <aside class="notes">
+            <p>The differences between the prototypal and the classical models trip up a lot of people.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <h3>The two inheritance models</h3>
+
+        <p>In classical models (PHP) properties and methods are copied down through sub-classes.</p>
+        <p>Properties are always created new, multiple inheritance is possible and deeply nested sub-class structures are very efficient.</p>
+
+    </section>
+
+    <section>
+
+        <p>In the prototypal model (JavaScript) properties and methods are referenced by sub-classes.</p>
+        <p>A sub-class can only have a single parent, deep nesting is very inefficient but sub-classes take up very small amounts of memory and can be updated at run-time by updating the parent.</p>
+
+        <aside class="notes">
+            <p>You can simulate classical inheritance with the prototypal model but you can't simulate prototypal inheritance with the classical model.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <h3>What does it look like in JavaScript?</h3>
+
+        <pre class="fragment"><code class="js" data-trim>
+function Carousel(items) {
+    this.items = items;
+    this.start = 0;
+    this.page = 3;
+}
+Carousel.prototype.hideAll = function () {
+    this.items.forEach(/* ... */);
+};
+Carousel.prototype.showVisible = function () {
+    /* ... */
+};
+
+var carousel = new Carousel();
+        </code></pre>
+
+    </section>
+    <section>
+
+        <p>Without the <code>new</code> keyword, <code>this</code> is set to <code>window</code> and we end up hammering the global scope.</p>
+
+        <pre><code class="js" data-trim>
+items; // ReferenceError: items is not defined
+var carousel = Carousel([/* &lt;div&gt;, &lt;div&gt; ...*/]);
+items; // -&gt; [&lt;div&gt;, &lt;div&gt; ...] (oops)
+        </code></pre>
+
+        <p class="fragment">For this reason, always write your classes with a leading capital letter and train yourself to know that a leading capital letter requires <code>new</code>.</p>
+
+    </section>
+    <section>
+
+        <p>There's another way of creating the <code>prototype</code> but it only works if the class is a top-level parent.</p>
+
+        <pre><code class="js" data-trim>
+function Carousel(items) {
+    this.items = items;
+    this.start = 0;
+    this.page = 3;
+}
+Carousel.prototype = {
+    hideAll: function () {
+        this.items.forEach(/* ... */);
+    },
+    showVisible: function () {
+        /* ... */
+    }
+};
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <h3>Sub-classing</h3>
+
+        <pre class="fragment"><code class="js" data-trim>
+function Carousel() {
+    Observer.call(this);
+    // ...
+}
+Carousel.prototype = new Observer();
+Carousel.prototype.render = function () {
+
+    this.hideAll();
+    this.showVisible();
+    this.dispatchEvent("render"); // inherited
+
+};
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>A common mistake is setting the <code>prototype</code> using an object literal and losing the inheritance.</p>
+
+        <pre class="fragment"><code class="js" data-trim>
+function Carousel() {
+    Observer.call(this);
+    // ...
+}
+Carousel.prototype = new Observer();
+Carousel.prototype = {
+    render: function () {
+        this.hideAll();
+        this.showVisible();
+        this.dispatchEvent("render"); // ReferenceError
+    }
+};
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>If you wanted to inherit without executing the constructor method for <code>Observer</code> until you construct <code>Carousel</code>:</p>
+
+        <pre><code class="js" data-trim>
+var F = function () {};
+F.prototype = Observer.prototype;
+
+function Carousel() {
+    // ...
+}
+Carousel.prototype = new F();
+Carousel.prototype.render = function () {
+    // ...
+};
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Why didn't we just use <code>Carousel.prototype = Observer.prototype</code>?</p>
+
+        <pre class="fragment"><code class="js" data-trim>
+function Carousel() {
+    // ...
+}
+Carousel.prototype = Observer.prototype;
+Carousel.prototype.render = function () {
+    // ...
+};
+
+var carousel = new Carousel();
+carousel.render(); // -&gt; renders carousel
+
+var observer = new Observer();
+observer.render(); // -&gt; renders carousel
+        </code></pre>
+
+        <aside class="notes">
+            <p>Everything in JavaScript is passed by reference so we're now modifying the referenced <code>prototype</code>.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>It didn't take long before we simplified that.</p>
+
+        <pre><code class="js" data-trim>
+function Carousel() {
+    // ...
+}
+Carousel.prototype = Object.create(Observer.prototype);
+Carousel.prototype.render = function () {
+    // ...
+};
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>With the modern method <code>Object.assign</code> we can simplify it even further.</p>
+
+        <pre><code class="js" data-trim>
+function Carousel() {
+    // ...
+}
+Carousel.prototype = Object.assign(
+    Object.create(Observer.prototype),
+    {
+
+        render: function () {
+            // ...
+        }
+
+    }
+);
+        </code></pre>
+
+        <aside class="notes">
+            <p><code>Object.assign</code> is the same as jQuery's <code>$.extend</code> without the deep flag.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <pre><code class="js" data-trim>
+function Carousel() {
+    // ...
+}
+Object.assign(
+    Carousel.prototype,
+    Object.create(Observer.prototype),
+    {
+
+        render: function () {
+            // ...
+        }
+
+    }
+);
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>A gotcha with JavaScript's prototypal style is that properties are referenced, not copied.</p>
+
+        <pre><code class="js" data-trim>
+function Carousel() {
+    // ...
+}
+Carousel.prototype.start = 0;
+
+var carouselOne = new Carousel();
+var carouselTwo = new Carousel();
+
+carouselOne.start; // -&gt; 0
+carouselTwo.start; // -&gt; 0
+carouselOne.next();
+carouselOne.start; // -&gt; 3
+carouselTwo.start; // -&gt; 3
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>This gets even stranger when you have an array on the <code>prototype</code>.</p>
+
+        <pre><code class="js" data-trim>
+function List() { /* ... */ }
+List.prototype.items = [];
+
+function SubList() {
+    List.call(this);
+    this.items.push("one");
+}
+SubList.prototype = Object.create(List.prototype);
+        </code></pre>
+        <pre><code class="js" data-trim>
+var subList = new SubList();
+subList.items; // -&gt; ["one"]
+
+var list = new List();
+list.items; // -&gt; ["one"]
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Solution: always create properties inside methods.</p>
+
+        <pre><code class="js" data-trim>
+// Bad: properties on the prototype.
+function List() {
+    // ...
+}
+List.prototype.items = [];
+
+// Good: properties created in the method.
+function List() {
+    this.items = [];
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>This is still pretty verbose so there's usually some kind of "create class" function.</p>
+
+        <pre><code class="js" data-trim>
+// PrototypeJS.
+var Animal = Class.create({
+    initialize: function (says) {
+        this.says = says;
+    },
+    talk: function () {
+        alert(this.says);
+    }
+});
+var Cat = Class.create(Animal, {
+    initialize: function ($super) {
+        $super("meow");
+    }
+});
+        </code></pre>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>JavaScript's class syntax</h2>
+    </section>
+
+    <section>
+
+        <p>ES6 simplified classes massively.</p>
+        <p>Behind-the-scenes it's still the <code>prototype</code> property.</p>
+
+        <pre><code class="js" data-trim>
+class Observer {
+    constructor() {}
+    addEventListener() {}
+    removeEventListener() {}
+    createEvent() {}
+    dispatchEvent() {}
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var observer = new Observer();
+observer.createEvent(); // -&gt; CustomEvent
+        </code></pre>
+
+        <aside class="notes">
+            <p>Without <code>new</code> you'll get a <code>TypeError</code>.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>Sub-classing is even easier</p>
+
+        <pre><code class="js" data-trim>
+class Constructor extends Observer {
+    constructor() {
+        super();
+        // ...
+    }
+    render() {
+        // ...
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var carousel = new Carousel();
+carousel.render(); // renders &amp; dispatches "render" event.
+        </code></pre>
+
+    </section>
+
+    <section>
+        <p>JavaScript's <code>class</code> syntax doesn't work in IE11 but <code>class</code> is just syntactic sugar for the <code>prototype</code> style.</p>
+        <p>This means that we can transpile <code>class</code> to with in IE11.</p>
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>Crockford Classless</h2>
+    </section>
+
+    <section>
+
+        <figure>
+            <img src="Douglas_Crockford%2C_February_2013.jpg">
+            <figcaption>Douglas Crockford - the JavaScript guy</figcaption>
+        </figure>
+
+    </section>
+
+    <section>
+
+        <p>Instead of using the <code>prototype</code> property (before <code>class</code> existed) Douglas Crockford had an idea.</p>
+
+        <pre><code class="js" data-trim>
+function Observer() {
+    var dummy = document.createElement("div");
+    return {
+        addEventListener: function (name, handler) {
+            dummy.addEventListener(name, handler);
+        },
+        // ...
+    };
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var observer = new Observer();
+observer.addEventListener("my-event", function () { /* ... */ });
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Sub-classing was easy since you just created an object, modified it and returned it.</p>
+
+        <pre><code class="js" data-trim>
+function Carousel() {
+
+    var observer = new Observer();
+
+    observer.render = function () {
+        // ...
+    };
+
+    return observer;
+
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var carousel = new Carousel();
+carousel.render(); // renders &amp; dispatches "render" event.
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>There are a few advantages of "Crockford Classless".</p>
+        <ul>
+            <li>Inheritance happens at compilation time so deeply nested sub-classes are still efficient.</li>
+            <li>Because properties stay within the function, they become private - only the object itself can access them.</li>
+            <li>The <code>new</code> keyword was optional. Including it or ommitting it made no difference.</li>
+        </ul>
+
+    </section>
+
+    <section>
+        <p>Developers don't tend to like "Crockford Classless" so you're unlikely to see it in the wild.</p>
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>Keywords</h2>
+    </section>
+
+    <section>
+
+        <h3><code>new</code></h3>
+
+        <p><code>new</code> creates a new instance:</p>
+        <ol>
+            <li>It creates a new object (<code>var o = {};</code>).</li>
+            <li>It gives the new object access to the constructor's <code>prototype</code> property (<code class="fragment highlight-red visible">o.__proto__ = Thing.prototype</code>).</li>
+            <li>It sets the context of that object as <code>this</code> (<code>o === this</code>).</li>
+            <li>It returns the object unless the constructor function returns its own object (<code>return o</code>).</li>
+        </ol>
+
+        <aside class="notes">
+            <p>Never manually set <code>__proto__</code>.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>If you try to create a class made with <code>class</code> without using <code>new</code> you'll get an error.</p>
+
+        <pre><code class="js" data-trim>
+class Thing { /* ... */ }
+var thing = Thing(); // TypeError:
+// Class constructor Thing cannot be invoked without 'new'
+var thing2 = new Thing(); // No error.
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>This doesn't happen with the old style.</p>
+
+            <pre><code class="js" data-trim>
+function Thing() { /* ... */ }
+var thing = Thing(); // No error.
+            </code></pre>
+        </div>
+
+    </section>
+
+    <section>
+
+        <h3><code>this</code></h3>
+
+        <p><code>this</code> refers to the current context. In OOP, that's the current instance.</p>
+
+        <div class="fragment">
+
+            <p>You can define <code>this</code> using the <code>.call()</code> or <code>.apply()</code> methods.</p>
+
+            <pre><code class="js" data-trim>
+var carousel = {
+    items: [/* &lt;div&gt;, &lt;div&gt; ... */],
+    hideAll: function () {
+        return this.items.forEach(/* ... */);
+    },
+    // ...
+};
+
+carousel.hideAll(); // hides &lt;div&gt;s
+carousel.feel.call({ items: [/* &lt;span&gt;, &lt;span&gt; ... */] });
+// hides &lt;span&gt;s
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>A new function creates a new context. This is either <code>undefined</code> or <code>window</code>.</p>
+
+        <pre><code class="js" data-trim>
+class Carousel extends Observer {
+    // ...
+    hideAll() {
+        this.items.forEach(function (item) {
+            this.dispatchEvent("hide-item", item);
+        });
+    }
+    // ...
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var carousel = new Carousel();
+carousel.hideAll();
+// TypeError: cannot read "dispatchEvent" of undefined
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>To get around that, you can store <code>this</code> in a variable and refer to it.</p>
+
+        <pre><code class="js" data-trim>
+class Carousel extends Observer {
+    // ...
+    hideAll() {
+        var that = this;
+        that.items.forEach(function (item) {
+            that.dispatchEvent("hide-item", item);
+        });
+    }
+    // ...
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var carousel = new Carousel();
+carousel.hideAll();
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Many functions that take a function will allow the context to be set.</p>
+
+        <pre><code class="js" data-trim>
+class Carousel extends Observer {
+    // ...
+    hideAll() {
+        this.items.forEach(function (item) {
+            this.dispatchEvent("hide-item", item);
+        }, this);
+    }
+    // ...
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var carousel = new Carousel();
+carousel.hideAll();
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>JavaScript's fat-arrow syntax for functions won't reset the context.</p>
+
+        <pre><code class="js" data-trim>
+class Carousel extends Observer {
+    // ...
+    hideAll() {
+        this.items.forEach((item) =&gt; {
+            this.dispatchEvent("hide-item", item);
+        });
+    }
+    // ...
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var carousel = new Carousel();
+carousel.hideAll();
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <h3><code>super</code></h3>
+
+        <p><code>super</code> was introduced at the same time as <code>class</code> to access parent methods.</p>
+
+        <pre><code class="js" data-trim>
+class Carousel extends Observer {
+    dispatchEvent(name, detail) {
+        super.dispatchEvent(name, detail);
+        alert("Dispatched!");
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var carousel = new Carousel();
+carousel.dispatchEvent(); // -&gt; alert("Dispatched!")
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>If you're overriding the <code>constructor</code> method, just call <code>super</code> as a function. It has to be the first line.</p>
+
+        <pre><code class="js" data-trim>
+class Carousel extends Observer {
+    constructor() {
+        super();
+        // ...
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var carousel = new Carousel();
+carousel.dispatchEvent("my-event");
+        </code></pre>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>General advice</h2>
+    </section>
+
+    <section>
+
+        <figure>
+            <img src="./telling-off.jpg">
+            <figcaption>Treat objects like little children</figcaption>
+        </figure>
+
+        <aside class="notes">
+            <p>4 rules that you can tell your objects to keep them in line.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <h3>1. Keep your hands to yourself!</h3>
+
+        <div class="fragment">
+
+            <p>Only call your own methods.</p>
+
+            <pre><code class="js" data-trim>
+class Person {
+    constructor(name) { this.name = name; }
+    getName() { return this.name; }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var person = new Person("JLo");
+
+// Good: only calling your own method.
+sauce.getName(); // -&gt; "JLo"
+
+// Bad: calling another method.
+sauce.getName().toLowerCase(); // -&gt; "jlo"
+            </code></pre>
+
+            <p class="fragment">Only chain if your methods return <code>this</code> like jQuery does.</p>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>There are 2 ways to keep your hands to yourself. First, you can create a method that gives you the response you need.</p>
+
+        <pre><code class="js" data-trim>
+class Person {
+    // ...
+    getLowerName() {
+        return this.name.toLowerCase();
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var person = new Person("JLo");
+person.getLowerName(); // -&gt; "jlo"
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Option 2 is to pass a flag to the method that will modify the response.</p>
+
+        <pre><code class="js" data-trim>
+class Person {
+    // ...
+    static get LOWER() {
+        return "lower";
+    }
+    getName(modifier) {
+        var name = this.name;
+        if (modifier === this.constructor.LOWER) {
+            name = name.toLowerCase();
+        }
+        return name;
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var person = new Person("JLo");
+person.getName(Person.LOWER); // -&gt; "jlo"
+        </code></pre>
+
+        <aside class="notes">
+            <p><code>static get</code> is how to create a class constant in JavaScript.</p>
+            <p>It doesn't <em>have</em> to be a class constant but I <em>really</em> recommend that it is.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>If you pass an object to your class, only call that objects methods.</p>
+
+        <pre><code class="js" data-trim>
+class Name {
+    constructor(name) { this.name = name; }
+    setAlias(alias) { this.alias = alias; }
+    getName() { return this.alias || this.name; }
+}
+class Person {
+    constructor(name) { this.name = name; }
+    getName() { return this.name.getName(); }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var name = new Name("James Long");
+name.setAlias("JLo");
+var person = new Person(name);
+person.getName(); // -&gt; "JLo"
+        </code></pre>
+
+    </section>
+
+    <section>
+        <p>If your object <strong>keeps its hands to itself</strong> then we can change the way the object works (or how the data is stored) without having to change places where it was used.</p>
+    </section>
+
+    <section>
+
+        <h3>2. Ask, don't take!</h3>
+
+        <div class="fragment">
+
+            <p>Don't access properties, execute methods.</p>
+
+            <pre><code class="js" data-trim>
+var person = new Person("JLo");
+
+// Good: executing a method.
+sauce.getName(); // -&gt; "JLo"
+
+// Bad: accessing a property.
+sauce.name; // -&gt; "JLo"
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>When JavaScript tries is told to access a property, it checks a few places in order:</p>
+        <ol>
+            <li>The object itself.</li>
+            <li>The object's <code>prototype</code>.</li>
+            <li>The object's parent's <code>prototype</code>.</li>
+            <li>The object's parent's parent's <code>prototype</code> ...</li>
+            <li><code>Object.prototype</code></li>
+        </ol>
+        <p class="fragment">If it gets all the way to <code>Object.prototype</code> and still can't find the property, it returns <code>undefined</code>.</p>
+
+        <aside class="notes">
+            <p>This is why deeply nested structures are really inefficient in JavaScript.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>A useful side effect of this is that we get a <code>TypeError</code> if we make a typo or access methods that were removed (or we forgot to write).</p>
+
+        <pre><code class="js" data-trim>
+var person = new Person("JLo");
+
+person.age; // -&gt; undefined (Easy to mistake for 0)
+person.isBreathing; // -&gt; undefined (Easy to mistake for false)
+
+person.fly(); // TypeError: person.fly is not a function
+        </code></pre>
+
+        <p class="fragment"><q>Death before confusion</q> - <em>Douglas Crockford</em></p>
+
+    </section>
+
+    <section>
+        <p>If your object <strong>asks instead of taking</strong>, we know if we ever make a typo or use a method that was removed.</p>
+        <p>We can also do more complicated things in the background when we get information without having to change the rest of the code.</p>
+    </section>
+
+    <section>
+
+        <h3>3. Don't leave your toys lying around!</h3>
+
+        <div class="fragment">
+
+            <p>Don't modify other objects or the global scope.</p>
+            <p>You may also hear "<strong>play nice with others</strong>".</p>
+
+        </div>
+
+    </section>
+    <section>
+
+        <pre><code class="js" data-trim>
+// Good: everything contained.
+class Person {
+
+    addJob(job) {
+        this.jobs.push(job);
+        job.addEmployee(this);
+    }
+
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+// Bad: telling the pan what to do.
+class Person {
+
+    addJob(job) {
+        this.jobs.push(job);
+        job.employees.push(this);
+    }
+
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+        <p>If your objects <strong>don't leave their toys lying around</strong> then no-one will trip over them.</p>
+        <p>Your object won't override anything by mistake. We can also do more complex things behind the scenes when setting information.</p>
+        <p>We can also swap out the object for another one without affecting anything else - the object is fully self-contained.</p>
+    </section>
+
+    <section>
+
+        <h3>4. Don't talk to strangers!</h3>
+
+        <div class="fragment">
+
+            <p>Only interact with things you've been told about.</p>
+
+            <pre><code class="js" data-trim>
+// Good - doesn't talk to strangers.
+class Person {
+    constructor(name) {
+        this.name = name;
+    }
+}
+var person = new Person(new Name("James Long"));
+            </code></pre>
+            <pre><code class="js" data-trim>
+// Bad - talks to strangers.
+class Person {
+    constructor(name) {
+        this.name = new Name(name);
+    }
+}
+var person = new Person("James Long");
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>This only applies to classes you've created. Native classes are fine.</p>
+
+        <pre><code class="js" data-trim>
+class Observer {
+    // ...
+    createEvent(name, detail) {
+        return new CustomEvent(name, {
+            bubbles: true,
+            cancelable: true,
+            detail: detail
+        });
+    }
+    // ...
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+        <p>If your object <strong>doesn't talk to strangers</strong> then we know what the object is interacting with. More importantly, we know where that interaction is happening.</p>
+        <p>We can change or remove a dependency without another object breaking because it relied on it.</p>
+    </section>
+
+    <section>
+        <ol>
+            <li>Keep your hands to yourself!</li>
+            <li>Ask, don't take!</li>
+            <li>Don't leave your toys lying around!</li>
+            <li>Don't talk to strangers!</li>
+        </ol>
+    </section>
+
+</section>
+
+<!--section>
+
+    <section>
+        <h2>What is OOP?</h2>
+    </section>
+
+    <section>
+        <p>Object Oriented Programming (OOP) is a coding paradigm built on 4 key concepts:</p>
+        <ul>
+            <li>Abstraction</li>
+            <li>Encapsulation</li>
+            <li>Inheritance</li>
+            <li>Polymorphism</li>
+        </ul>
+    </section>
+
+    <section>
+
+        <h3>Abstraction</h3>
+        <p>The exposing of high-level mechanisms rather than inner workings.</p>
+
+        <div class="fragment">
+
+            <pre><code class="js" data-trim>
+let carousel = new Carousel();
+carousel.render();
+            </code></pre>
+
+            <p>The <code>render</code> method actually hides some elements and shows others by triggering events on those elements.</p>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <h3>Encapsulation</h3>
+        <p>Keeping properties private and only interacting with behaviours.</p>
+
+        <div class="fragment">
+
+            <pre><code class="js" data-trim>
+let carousel = new Carousel();
+carousel.next();
+            </code></pre>
+
+            <p>The <code>next</code> method adds a <code>page</code> property to a <code>start</code> property to know which element to show.</p>
+
+        </div>
+
+    </section>
+
+</section-->
+
+<!-- What is OOP? Abstraction, Encapsulation, Inheritance, Polymorphism -->
+<!-- Why learn it? -->
+<!-- Syntax: Prototypal, class, Crockford Classless -->
+<!-- Keywords: new, this, super -->
+<!-- Little Children -->
+
 <section id="questions">
     <h1>Any questions?</h1>
 </section>
@@ -49,7 +1553,7 @@
 
 
 
-<script src="../reveal/lib/js/head.min.js"></script>
+<!-- <script src="../reveal/lib/js/head.min.js"></script> -->
 <script src="../reveal/js/reveal.js"></script>
 <script>
 Reveal.configure({
@@ -79,6 +1583,7 @@ Reveal.initialize({
     ]
 });
 </script>
+<script src="./Carousel.js"></script>
 
 </body>
 </html>

@@ -115,17 +115,27 @@ class Timeline {
 // Abstract everything out through the observer.
 // Observer from https://gist.github.com/james-jlo-long/fe69c667463d127063617a2b4d5a54c5
 
+class Observer {
+    construct() {}
+    addEventListener() {}
+    removeEventListener() {}
+    createEvent() {}
+    dispatchEvent() {}
+}
+
 class Timeline extends Observer {
 
     constructor(/* Element[] */ elements) {
 
         super();
         this.elements = elements;
+        this.start = 0;
+        this.page = 3;
 
     }
 
     hideAll() {
-        this.elements.forEach((el) => this.dispatch("hide-element", el));
+        this.elements.forEach((el) => this.dispatchEvent("hide-element", el));
     }
 
     showVisible() {
@@ -138,7 +148,7 @@ class Timeline extends Observer {
 
         elements
             .slice(start, start + page)
-            .forEach((el) => this.dispatch("show-element", el));
+            .forEach((el) => this.dispatchEvent("show-element", el));
 
     }
 
@@ -146,7 +156,7 @@ class Timeline extends Observer {
 
         this.hideAll();
         this.showVisible();
-        this.trigger("render");
+        this.dispatchEvent("render");
 
     }
 
@@ -163,7 +173,7 @@ class Timeline extends Observer {
         this.render();
 
         if (this.start + this.page >= this.elements.length) {
-            this.trigger("end");
+            this.dispatchEvent("end");
         }
 
     }
@@ -174,7 +184,7 @@ class Timeline extends Observer {
         this.render();
 
         if (this.start === 0) {
-            this.trigger("start");
+            this.dispatchEvent("start");
         }
 
     }
@@ -190,16 +200,16 @@ let next = document.querySelector("...");
 prev.addEventListener("click", () => timeline.prev());
 next.addEventListener("click", () => timeline.next());
 
-timeline.on("hide-element", ({ element: detail }) => element.hidden = true);
-timeline.on("show-element", ({ element: detail }) => element.hidden = false);
-timeline.on("render", () => {
+timeline.addEventListener("hide-element", ({ detail: element }) => element.hidden = true);
+timeline.addEventListener("show-element", ({ detail: element }) => element.hidden = false);
+timeline.addEventListener("render", () => {
 
-    prev.disabled = true;
-    next.disabled = true;
+    prev.disabled = false;
+    next.disabled = false;
 
 });
-timeline.on("start", () => next.disabled = true);
-timeline.on("end", () => prev.disabled = true);
+timeline.addEventListener("start", () => prev.disabled = true);
+timeline.addEventListener("end", () => next.disabled = true);
 
 // BreakPoints from https://gist.github.com/james-jlo-long/fe69c667463d127063617a2b4d5a54c5
 let dims = { /* ... */ };

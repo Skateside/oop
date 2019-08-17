@@ -1,0 +1,22 @@
+.reveal figure > img {
+    max-height: 50vh;
+}
+
+.reveal pre code {
+    max-height: 411px; /* 15 lines */
+}
+
+.o-pack {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+}
+
+.o-stack {
+    display: flex;
+    flex-direction: column;
+}
+
+.o-stack__full {
+    flex-grow: 1;
+}

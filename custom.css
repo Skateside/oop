@@ -10,6 +10,10 @@
     max-height: 411px; /* 15 lines */
 }
 
+.reveal .tall > code {
+    max-height: 603px; /* 22 lines */
+}
+
 .o-pack {
     display: flex;
     flex-flow: row nowrap;
@@ -23,4 +27,54 @@
 
 .o-stack__full {
     flex-grow: 1;
+}
+
+/* Design Patters */
+
+.display {
+    transition: all .2s ease;
+}
+
+.display-blue {
+    color: #1b91ff;
+}
+
+.display-green {
+    color: #17ff2e;
+}
+
+.box {
+    font-size: 0.5em;
+    text-align: left;
+}
+
+.box .box__list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.book {
+    font-size: 0.5em;
+}
+
+.reveal .book > img {
+    max-height: 15vh;
+}
+
+.checkboxes {
+    height: 50vh;
+    padding: 1em;
+    border: 0.2em solid #fff;
+    overflow: auto;
+    margin-top: 20px;
+}
+
+.checkboxes :indeterminate + label {
+    color: #1b91ff;
+}
+
+.checkboxes :checked + label {
+    color: #17ff2e;
+    font-weight: bold;
 }

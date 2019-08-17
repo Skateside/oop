@@ -29,52 +29,7 @@
 
     <section>
 
-<style>
-.display {
-    transition: all .2s ease;
-}
-
-.display-blue {
-    color: #1b91ff;
-}
-
-.display-green {
-    color: #17ff2e;
-}
-
-.boxes {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-around;
-}
-
-.box {
-    font-size: 0.5em;
-    text-align: left;
-}
-
-.box .box__list {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-.books {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-around;
-}
-
-.book {
-    font-size: 0.5em;
-}
-
-.reveal .book > img {
-    max-height: 15vh;
-}
-</style>
-
-        <div class="boxes">
+        <div class="o-pack">
             <div class="box">
                 <h2 class="box__title">Creational</h2>
                 <ul class="box__list">
@@ -115,7 +70,7 @@
             </div>
         </div>
 
-        <div class="books">
+        <div class="o-pack">
 
             <figure class="book">
                 <img src="./design-patterns-book.jpg">
@@ -411,12 +366,359 @@ class Leaf {
 
     <section>
 
-        <form class="o-pack">
-            <input type="number">
-            <input type="number">
-            <input type="number">
+        <form class="o-pack" id="checkboxes-input">
+            <input type="number" min="1" max="10" step="1" placeholder="1 - 10" required aria-label="Number of items" name="parents">
+            <input type="number" min="1" max="10" step="1" placeholder="1 - 10" required aria-label="Maximum depth" name="depth">
+            <input type="number" min="1" max="10" step="1" placeholder="1 - 10" required aria-label="Maximum number of children" name="children">
             <button type="submit">Generate</button>
         </form>
+
+        <div class="checkboxes" id="checkboxes-output">
+        </div>
+
+        <aside class="notes">
+            <p>This is <strong>{1}</strong> number of items, a maximum depth of <strong>{2}</strong> and each having a maximum of <strong>{3}</strong> children.</p>
+            <p>This is the composite pattern except the branch and leaf are the same thing.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>The checkbox knows about its immediate children and it's closest parent.</p>
+
+        <pre><code class="js" data-trim>
+class Checkbox {
+    constructor(input) {
+        this.input = input;
+        this.children = [];
+        input.addEventListener("change", () => {
+            this.setState(input.checked);
+        });
+    }
+    setParent(parent) { this.parent = parent; }
+    addChild(child) {
+        child.setParent(this);
+        this.children.push(child);
+    }
+    // ...
+}
+        </code></pre>
+
+    </section>
+    <section>
+
+        <pre class="tall"><code class="js" data-trim>
+class Checkbox {
+    // ...
+    setState(state) {
+        if (this.isSetting) {
+            return;
+        }
+        this.isSetting = true;
+        if (typeof state === "boolean") {
+            this.input.indeterminate = false;
+            this.input.checked = state;
+            this.children.forEach((kid) => kid.setState(state));
+        } else if (state === "mixed") {
+            this.input.checked = false;
+            this.input.indeterminate = true;
+        }
+        if (this.parent) {
+            this.parent.update();
+        }
+        this.isSetting = false;
+    }
+    // ...
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>This is the Composite Pattern magic.</p>
+            <p>Because we can check a checkbox, it updates its children which then update the parent, we need the <code>isSetting</code> flag to prevent infinite loops.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <pre class="tall"><code class="js" data-trim>
+class Checkbox {
+    // ...
+    update() {
+        let mixed = 0; let checked = 0;
+        this.children.forEach((child) => {
+            let state = child.getState();
+            if (state === "mixed") {
+                mixed += 1;
+            } else if (state) {
+                checked += 1;
+            }
+        });
+        if (checked === this.children.length) {
+            this.setState(true);
+        } else if (mixed || checked) {
+            this.setState("mixed");
+        } else {
+            this.setState(false);
+        }
+    }
+    // ...
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>This method checks how many childen are checked. If they all are, we should be checked.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <pre><code class="js" data-trim>
+class Checkbox {
+    // ...
+    getState() {
+        return (
+            this.input.indeterminate
+            ? "mixed"
+            : this.input.checked
+        );
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>We do this dynamically, but it boils down to this:</p>
+
+        <pre><code class="js" data-trim>
+let c_1 = new Checkbox(document.getElementById("c_1"));
+let c_1_1 = new Checkbox(document.getElementById("c_1_1"));
+let c_1_2 = new Checkbox(document.getElementById("c_1_2"));
+
+c_1.addChild(c_1_1);
+c_1.addChild(c_1_2);
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <h3>Benefits of the Composite Pattern</h3>
+
+        <ul>
+            <li>You don't have to worry about the structure as a whole, just how a single node works.</li>
+            <li>It can handle any level of nesting.</li>
+        </ul>
+
+        <p>Downsides include the potential to use a lot of memory.</p>
+        <pre><code class="js" data-trim>
+// How many checkbox will this check?
+checkbox.setState(true);
+        </code></pre>
+
+        <aside class="notes">
+            <p>Trick question: depends how many children there are and how many children they have.</p>
+        </aside>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>Adapter Pattern</h2>
+    </section>
+
+    <section>
+
+        <figure>
+            <img src="./adapter.jpg" alt="">
+            <figcaption>An adapter converts a strange input into a known output</figcaption>
+        </figure>
+
+    </section>
+
+    <section>
+        <p>If you need to work with a few different things that do a similar thing but in different ways, you probably need an adapter for them.</p>
+    </section>
+
+    <section>
+
+        <p>As a practical example, I had to track all forms on the Epson website <em>and</em> track any errors, even though the forms are old and there have been a few validators used.</p>
+
+        <pre class="fragment"><code class="js" data-trim>
+class FormTracker {
+
+    constructor(form) {
+
+        this.form = form;
+        this.discoverValidator();
+        this.addHandlers();
+
+    }
+
+    // ...
+
+}
+        </code></pre>
+
+    </section>
+    <section>
+
+        <p>It's a little more complicated than this, but basically:</p>
+
+        <pre><code class="js" data-trim>
+class FormTracker {
+    // ...
+    static adapters = [];
+    discoverValidator() {
+        let form = this.form;
+        let Adapter = this.constructor.adapters.find(
+            (adapter) => adapter.check(form)
+        );
+        if (Adapter) {
+            this.validator = new Adapter(form);
+        }
+    }
+    // ...
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>We actually check adapters in a Last-In-First-Out order.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <p>Again, there's a few more checks, but essentially:</p>
+
+        <pre><code class="js" data-trim>
+class FormTracker {
+    // ...
+    addHandlers() {
+        let validator = this.validator;
+        this.form.addEventListener("submit", () => {
+            if (validator && validator.hasErrors()) {
+                this.trackErrors(validator.getErrors());
+            } else {
+                this.trackSuccess();
+            }
+        });
+    }
+    trackErrors(errors) { /* ... */ }
+    trackSuccess() { /* ... */ }
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>Due to jQuery Validation, we have to wait a bit after the form submission before checking.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>I created an abstract Adapter so all my adapters work the same way.</p>
+
+        <pre><code class="js" data-trim>
+class ValidationAdapter {
+    static check(form) {
+        return false;
+    }
+    constructor(form) {
+        this.form = form;
+    }
+    getErrors() {
+        return [];
+    }
+    hasErrors() {
+        return this.getErrors().length > 0;
+    }
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>I can also reject anything that doesn't inherit from my abstract class.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <p>Any form relying on HTML5 form validation gets tracked like this:</p>
+
+        <pre><code class="js" data-trim>
+class NativeValidationAdapter extends ValidationAdapter {
+    static check(form) {
+        return (
+            !form.matches("[novalidate]")
+            && ("reportValidity" in form)
+        );
+    }
+    getErrors() {
+        return [...this.form.querySelectorAll("...")]
+            .filter((element) => !element.validity.valid)
+            .map((element) => ({
+                element, message: element.validationMessage
+            }));
+    }
+}
+        </code></pre>
+
+    </section>
+    <section>
+
+        <p>jQuery Validation has all the info I need in its <code>errorList</code> property.</p>
+
+        <pre><code class="js" data-trim>
+class JqueryValidationAdapter extends ValidationAdapter {
+    static check(form) {
+        return Boolean($(form).data("validator"));
+    }
+    constructor(form) {
+        super(form);
+        this.validator = $(form).data("validator");
+    }
+    getErrors() {
+        return this.validator.errorList;
+    }
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>Notice how I can add properties and it doesn't cause any problems.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <p>The CO2 calculator had a custom validator that just changed the input border colour.</p>
+
+        <pre><code class="js" data-trim>
+class CO2CalculatorValidationAdapter extends ValidationAdapter {
+    static check(form) { return form.id === "co2-calculator"; }
+    getErrors() {
+        return [...this.form.querySelectorAll("...")]
+            .filter((element) => this.isErrorElement(element))
+            .map((element) => ({
+                element,
+                message: "This field is required"
+            }));
+    }
+    getBorderColor(element) {/* getComputedStyle... */}
+    isErrorElement(element) {/* "red", "rgb(255, 0, 0)" ... */}
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>As you saw from the CO2 Calculator curve-ball, I don't need to change the <code>FormTracker</code> code if I see a validator I don't recognise.</p>
+        <p>This completely future-proofs the tracking because any new validator can just have a new adapter.</p>
 
     </section>
 
@@ -424,8 +726,8 @@ class Leaf {
 
 <!--
     Decorator Pattern.
-    Composite Pattern.
-    Adapter Pattern.
+*   Composite Pattern.
+*   Adapter Pattern.
     Observer Pattern. (but in OOP ...)
     Factory Pattern. (it's mentioned a load of times ...)
 *   Iterator Pattern. (https://en.wikipedia.org/wiki/Iterator_pattern)
@@ -472,85 +774,9 @@ Reveal.initialize({
         }
     ]
 });
-
-/*
-var fragSelectors = Array.prototype.reduce.call(
-    document.querySelectorAll("[data-fragment]"),
-    function (unique, el) {
-
-        if (!unique.includes(el.dataset.fragment)) {
-            unique.push(el.dataset.fragment);
-        }
-
-        return unique;
-
-    },
-    []
-);
-Reveal.addEventListener("fragmentshown", function (e) {
-
-    var fragment = e.fragment;
-
-    fragSelectors.forEach(function (fragSelector) {
-
-        if (fragment.matches(fragSelector)) {
-
-            document.querySelectorAll("[data-fragment=\"" + fragSelector + "\"]").forEach(function (frag) {
-                frag.classList.add("visible");
-            });
-
-        }
-
-    });
-
-});
-*/
-
-var colourFrags = [
-    {
-        check: "#pro-js-dp",
-        find: ".js--fragment--one",
-        className: "display-blue"
-    },
-    {
-        check: "#this-talk",
-        find: ".js--fragment--two",
-        className: "display-green"
-    }
-];
-
-Reveal.addEventListener("fragmentshown", ({ fragment }) => {
-
-    colourFrags.forEach(({ check, find, className }) => {
-
-        if (fragment.matches(check)) {
-
-            document.querySelectorAll(find).forEach(function (el) {
-                el.classList.add(className);
-            });
-
-        }
-
-    });
-
-});
-
-Reveal.addEventListener("fragmenthidden", ({ fragment }) => {
-
-    colourFrags.forEach(({ check, find, className }) => {
-
-        if (fragment.matches(check)) {
-
-            document.querySelectorAll(find).forEach(function (el) {
-                el.classList.remove(className);
-            });
-
-        }
-
-    });
-
-});
 </script>
+<script src="./colour-fragments.js"></script>
+<script src="./Checkboxes.js"></script>
 
 </body>
 </html>

@@ -350,14 +350,12 @@ prev.addEventListener("click", () => carousel.prev());
 next.addEventListener("click", () => carousel.next());
         </code></pre>
         <pre><code class="js" data-trim>
-carousel.addEventListener(
-    "hide-item",
-    ({ detail }) => detail.hidden = true
-);
-carousel.addEventListener(
-    "show-item",
-    ({ detail }) => detail.hidden = false
-);
+carousel.addEventListener("hide-item", ({ detail }) => {
+    detail.hidden = true;
+});
+carousel.addEventListener("show-item", ({ detail }) => {
+    detail.hidden = false;
+});
 carousel.addEventListener("render", () => {
     prev.disabled = false;
     next.disabled = false;
@@ -1177,6 +1175,68 @@ class Carousel extends Observer {
         <pre><code class="js" data-trim>
 var carousel = new Carousel();
 carousel.dispatchEvent("my-event");
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <h3><code>static</code></h3>
+
+        <p><code>static</code> was also introduced at the same time as <code>class</code>. It creates properties shared between all instances of a class.</p>
+
+        <pre><code class="js" data-trim>
+class Singleton {
+    static get() {
+        if (!this.instance) {
+            this.instance = new this();
+        }
+        return this.instance;
+    }
+}
+
+let singleton = Singleton.get();
+        </code></pre>
+
+        <aside class="notes">
+            <p>I'll full explain the Singleton Pattern next week.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>You can access static properties and methods using either the class name or <code>this.constructor</code>.</p>
+
+        <pre><code class="js" data-trim>
+class Name {
+    static capitalise(string) {
+        return string.toUpperCase();
+    }
+    constructor(name) {
+        this.name = name;
+        this.upperName = this.constructor.capitalise(name);
+        // or
+        this.upperName = Name.capitalise(name);
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>You can create getters and setters using <code>static</code> - if you only use a getter, you've created a class constant.</p>
+
+        <pre><code class="js" data-trim>
+class Temperature {
+    static get C() { return "celsius"; }
+    static get F() { return "fahrenheit"; }
+}
+
+Temperature.C; // -&gt; "celsius";
+Temperature.C = "foo"; // does nothing
+Temperature.C; // -&gt; "celsius";
         </code></pre>
 
     </section>

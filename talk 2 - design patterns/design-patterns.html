@@ -28,6 +28,10 @@
 <section>
 
     <section>
+        <h2 style="color:fuchsia">(insert title here)</h2>
+    </section>
+
+    <section>
 
         <div class="o-pack">
             <div class="box">
@@ -85,6 +89,120 @@
         </div>
 
         <div class="fragment" id="this-talk"></div>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
+        <h2>Singleton Pattern</h2>
+    </section>
+
+    <section>
+
+        <p>The singleton pattern limits itself so that only one instance can be created.</p>
+        <p class="fragment">There are 3 ways to create a singleton.</p>
+
+    </section>
+
+    <section>
+
+        <p>Option 1: checking during instantiation.</p>
+
+        <pre><code class="js" data-trim>
+class Singleton {
+    constructor() {
+        let instance = this.constructor.instance;
+        if (instance) {
+            return instance;
+        }
+        this.constructor.instance = this;
+        // ...
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+let s1 = new Singleton();
+let s1_again = new Singleton();
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>Pros: created just like any other instance.</p>
+            <p>Cons: can be confusing if parameters are involved.</p>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>Option 2: static function.</p>
+
+        <pre><code class="js" data-trim>
+class Singleton {
+    static get() {
+        if (!this.instance) {
+            this.instance = new this();
+        }
+        return this.instance;
+    }
+    // ...
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+let s1 = Singleton.get();
+let s1_again = Singleton.get();
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>Pros: more obvious that it's a singleton.</p>
+            <p>Cons: doesn't prevent multiple instances being created.</p>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>Option 3: just use an object literal.</p>
+
+        <pre><code class="js" data-trim>
+let singleton = {
+    // ...
+};
+        </code></pre>
+        <pre><code class="js" data-trim>
+let s1 = singleton;
+let s1_again = singleton;
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>Pros: no function overhead, super efficient.</p>
+            <p>Cons: doesn't use <code>class</code> keyword and therefore seems inferior.</p>
+
+        </div>
+
+        <aside class="notes">
+            <p>Pro tip: programmers are super petty.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <h3>When to use the Singleton Pattern</h3>
+
+        <p class="fragment">Er ...</p>
+        <p class="fragment">Honestly, every time I've used this pattern, I've regretted it.</p>
+
+        <aside class="notes">
+            <p>I'm showing you so you recognise it.</p>
+        </aside>
 
     </section>
 
@@ -724,14 +842,220 @@ class CO2CalculatorValidationAdapter extends ValidationAdapter {
 
 </section>
 
+<section>
+
+    <section>
+        <h2>Observer Pattern</h2>
+    </section>
+
+    <section>
+
+        <p>The observer pattern updates other objects when something interesting has happened.</p>
+        <p class="fragment">If you've ever used event listeners on DOM node, you've seen this pattern.</p>
+
+    </section>
+
+    <section>
+
+        <p>A basic observer:</p>
+
+        <pre><code class="js" data-trim>
+class Observer {
+    constructor() {
+        this.events = {};
+    }
+    addEventListener(name, func) {
+        if (!this.events[name]) {
+            this.events[name] = [];
+        }
+        this.events[name].push(func);
+    }
+    dispatchEvent(name, data) {
+        (this.events[name] || []).forEach((func) => func(data));
+    }
+}
+        </code></pre>
+
+        <pre><code class="js" data-trim>
+let observer = new Observer();
+observer.addEventListener("my-event", (data) => {/* ... */});
+observer.dispatchEvent("my-event");
+        </code></pre>
+
+        <aside class="notes">
+            <p>You'll see observers like this everywhere.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>The problem with that version is its fragility.</p>
+
+        <pre><code class="js" data-trim>
+observer.addEventListener("my-event", () => {
+    console.log("1");
+    DOES_NOT_EXIST++;
+});
+observer.addEventListener("my-event", () => { console.log("2"); });
+observer.dispatchEvent("my-event");
+
+// Logs: 1
+// ReferenceError: DOES_NOT_EXIST is not defined
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>You can create a far more stable version using DOM nodes and <code>CustomEvent</code>.</p>
+
+        <pre><code class="js" data-trim>
+class Observer {
+    constructor(eventElement = document.createElement("div")) {
+        this.eventElement = eventElement;
+    }
+    addEventListener(name, handler) {
+        this.eventElement.addEventListener(name, handler);
+    }
+    removeEventListener(name, handler) {
+        this.eventElement.removeEventListener(name, handler);
+    }
+    // ...
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>By allowing us to change <code>eventElement</code>, we can delegate these events.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <pre class="tall"><code class="js" data-trim>
+class Observer {
+    // ...
+    createEvent(name, detail) {
+        return new CustomEvent(name, {
+            bubbles: true,
+            cancelable: true,
+            detail
+        });
+    }
+    dispatchEvent(event, detail) {
+        if (typeof event === "string") {
+            event = this.createEvent(event, detail);
+        }
+        this.eventElement.dispatchEvent(event);
+        return event;
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Now the observer is very robust.</p>
+
+        <pre><code class="js" data-trim>
+observer.addEventListener("my-event", () => {
+    console.log("1");
+    DOES_NOT_EXIST++;
+});
+observer.addEventListener("my-event", () => { console.log("2"); });
+observer.dispatchEvent("my-event");
+
+// Logs: 1
+// ReferenceError: DOES_NOT_EXIST is not defined
+// Logs: 2
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Sub-classing <code>Observer</code> allows you to set the <code>eventElement</code>.</p>
+
+        <pre><code class="js" data-trim>
+class Thing extends Observer {
+    constructor(element) {
+        super(element);
+        // ...
+    }
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+let thing = new Thing(document.querySelector("..."));
+        </code></pre>
+
+        <p>This allows you to delegate custom events if you wish.</p>
+
+    </section>
+
+    <section>
+
+        <p>The observer pattern allows different objects to iteract without tightly coupling them.</p>
+
+        <pre><code class="js" data-trim>
+// Tight coupling.
+class Widget {
+    construct(gizmo) { this.gizmo = gizmo; }
+    doSomething() { this.gizmo.doRelated(); }
+}
+
+let widget = new Widget(new Gizmo());
+        </code></pre>
+        <pre><code class="js" data-trim>
+// Loose coupling.
+class Widget extends Observer {
+    doSomething() { this.dispatchEvent("something"); }
+}
+
+let widget = new Widget();
+let gizmo = new Gizmo();
+widget.addEventListener("something", () => gizmo.doRelated());
+        </code></pre>
+
+        <aside class="notes">
+            <p>In the loose coupleing code, <code>Widget</code> and <code>Gizmo</code> don't know anything about each other.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>You can create an interface separately from your object.</p>
+
+        <pre><code class="js" data-trim>
+// Remember the Carousel example?
+carousel.addEventListener("hide-item", ({ detail }) => {
+    detail.hidden = true;
+});
+carousel.addEventListener("show-item", ({ detail }) => {
+    detail.hidden = false;
+});
+carousel.addEventListener("render", () => {
+    prev.disabled = false;
+    next.disabled = false;
+});
+carousel.addEventListener("start", () => prev.disabled = true);
+carousel.addEventListener("end", () => next.disabled = true);
+        </code></pre>
+
+    </section>
+
+</section>
+
 <!--
     Decorator Pattern.
 *   Composite Pattern.
 *   Adapter Pattern.
-    Observer Pattern. (but in OOP ...)
+*   Observer Pattern. (but in OOP ...)
     Factory Pattern. (it's mentioned a load of times ...)
 *   Iterator Pattern. (https://en.wikipedia.org/wiki/Iterator_pattern)
-    Singleton Pattern.
+*   Singleton Pattern.
 -->
 
 

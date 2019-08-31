@@ -23,12 +23,16 @@
     <p>Common OOP patterns.</p>
 </section>
 
-<!-- What is a design pattern? -->
-
 <section>
 
     <section>
-        <h2 style="color:fuchsia">(insert title here)</h2>
+        <h2>What is a design pattern?</h2>
+        <p style="color:fuchsia"><em>todo</em></p>
+    </section>
+
+    <section>
+        <p>Design patterns are general, reusable solutions to common programming problems.</p>
+        <p class="fragment">They're templates that can sometimes be applied to the issue you're facing.</p>
     </section>
 
     <section>
@@ -851,7 +855,7 @@ class CO2CalculatorValidationAdapter extends ValidationAdapter {
     <section>
 
         <p>The observer pattern updates other objects when something interesting has happened.</p>
-        <p class="fragment">If you've ever used event listeners on DOM node, you've seen this pattern.</p>
+        <p class="fragment">If you've ever used event listeners on DOM nodes, you've seen this pattern.</p>
 
     </section>
 
@@ -1052,8 +1056,134 @@ carousel.addEventListener("end", () => next.disabled = true);
 
 </section>
 
+<section>
+
+    <section>
+        <h2>Decorator Pattern</h2>
+    </section>
+
+    <section>
+        <p>The decorator pattern adds or modifies functionality at run-time.</p>
+    </section>
+
+    <section>
+
+        <pre class="tall"><code class="js" data-trim>
+class Sale {
+    static decorators = Object.create(null);
+    constructor(price = 100) {
+        this.price = price;
+    }
+    getPrice() {
+        return this.price;
+    }
+    decorate(decorator) {
+        let decoration = this.constructor.decorators[decorator];
+        if (!decoration) {
+            throw new ReferenceError("...");
+        }
+        return Object.assign(
+            Object.create(this),
+            { uber: this },
+            decoration
+        );
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <pre><code class="js" data-trim>
+Sale.decorators.halfPrice = {
+    getPrice() {
+        return this.uber.getPrice() / 2;
+    }
+};
+Sale.decorators.tax = {
+    getPrice() {
+        return this.uber.getPrice() * 1.2;
+    }
+};
+        </code></pre>
+
+        <pre class="fragment"><code class="js" data-trim>
+let sale = new Sale();
+sale.getPrice(); // -> 100
+
+sale = sale.decorate("halfPrice");
+sale.getPrice(); // -> 50
+
+sale = sale.decorate("tax");
+sale.getPrice(); // -> 60
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <pre class="tall"><code class="js" data-trim>
+class Sale {
+    // ...
+    decorate(decorator) {
+        let decoration = this.constructor.decorators[decorator];
+        if (!decoration) {
+            throw new ReferenceError("...");
+        }
+        Object.entries(decoration).forEach(([name, func]) => {
+            let previous = this[name].bind(this);
+            this[name] = (...args) => func(previous, ...args);
+        });
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <pre><code class="js" data-trim>
+Sale.decorators.halfPrice = {
+    getPrice(previous) {
+        return previous() / 2;
+    }
+};
+Sale.decorators.tax = {
+    getPrice(previous) {
+        return previous() * 1.2;
+    }
+};
+        </code></pre>
+
+        <pre class="fragment"><code class="js" data-trim>
+let sale = new Sale();
+sale.getPrice(); // -> 100
+
+sale.decorate("halfPrice");
+sale.getPrice(); // -> 50
+
+sale.decorate("tax");
+sale.getPrice(); // -> 60
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>The decorator pattern is really useful for user-selected options.</p>
+        <p>Instead of a load of <code>if</code> statements, just add the decoration that the user wants.</p>
+
+        <aside class="notes">
+            <p>I think that using this pattern on <strong>First Tickets</strong> might be helpful.</p>
+        </aside>
+
+    </section>
+
+</section>
+
 <!--
-    Decorator Pattern.
+*   Decorator Pattern.
 *   Composite Pattern.
 *   Adapter Pattern.
 *   Observer Pattern. (but in OOP ...)

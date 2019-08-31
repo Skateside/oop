@@ -2,18 +2,21 @@ class Factory {
     constructor(options) {
         this.options = Object.create(null);
     }
-    create(option) {
-        let factory = this.options[option];
-        if (!factory) {
-            throw new ReferenceError("...");
-        }
-        return factory();
-    }
     define(option, definition) {
         if (this.options[option]) {
             throw new Error("...");
         }
         this.options[option] = definition;
+    }
+    require(option) {
+        let factory = this.options[option];
+        if (!factory) {
+            throw new ReferenceError("...");
+        }
+        return factory;
+    }
+    create(option) {
+        return this.require(option)();
     }
 }
 
@@ -39,18 +42,11 @@ class AvailableFactory extends Factory {
         }
         throw new Error("...");
     }
-    create(option) {
-        let factory = this.options[option];
-        if (!factory) {
-            throw new ReferenceError("...");
-        }
-        return factory.definition();
-    }
     define(option, definition, check) {
-        super.define(option, {
-            definition,
-            check
-        });
+        super.define(option, { definition, check });
+    }
+    create(option) {
+        return this.require(option).definition();
     }
 }
 
@@ -72,5 +68,5 @@ asyncFactory.define("xhr", {
     }
 });
 
-asyncFactory.getAvailable("http://...")
+asyncFactory.getAvailable("https://...")
     .done((response) => {/* ... */});

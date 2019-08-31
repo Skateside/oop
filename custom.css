@@ -6,12 +6,28 @@
     max-height: 30vh;
 }
 
+.reveal pre {
+    width: 95%;
+}
+
 .reveal pre code {
     max-height: 411px; /* 15 lines */
 }
 
 .reveal .tall > code {
     max-height: 603px; /* 22 lines */
+}
+
+.reveal p > code,
+.reveal li > code {
+    background-color: #3f3f3f;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    font-size: 0.85em;
+    padding: 0 0.2em;
+}
+
+.reveal strong {
+    text-decoration: underline;
 }
 
 .o-pack {

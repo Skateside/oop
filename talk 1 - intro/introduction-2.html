@@ -255,17 +255,20 @@ class Carousel extends Observer {
     </section>
     <section>
 
-        <pre><code class="js" data-trim>
+        <pre class="tall"><code class="js" data-trim>
 class Carousel extends Observer {
     // ...
     hideAll() {
-        this.items
-            .forEach((it) => this.dispatchEvent("hide-item", it));
+        this.items.forEach((item) => {
+            this.dispatchEvent("hide-item", item);
+        });
     }
     showVisible() {
         this.items
             .slice(this.start, this.start + this.page)
-            .forEach((it) => this.dispatchEvent("show-item", it));
+            .forEach((item) => {
+                this.dispatchEvent("show-item", item);
+            });
     }
     // ...
 }
@@ -304,7 +307,7 @@ class Carousel extends Observer {
     </section>
     <section>
 
-        <pre><code class="js" data-trim>
+        <pre class="tall"><code class="js" data-trim>
 class Carousel extends Observer {
     // ...
     next() {
@@ -314,12 +317,6 @@ class Carousel extends Observer {
             this.dispatchEvent("end");
         }
     }
-    // ...
-}
-        </code></pre>
-        <pre><code class="js" data-trim>
-class Carousel extends Observer {
-    // ...
     prev() {
         this.start = Math.max(this.start - this.page, 0);
         this.render();
@@ -340,16 +337,18 @@ class Carousel extends Observer {
     <section>
 
         <pre><code class="js" data-trim>
-let items = [...document.querySelectorAll(".carousel__item")];
+let items = [
+    ...document.querySelectorAll(".carousel__item")
+];
 let next = document.getElementById("next");
 let prev = document.getElementById("prev");
 let carousel = new Carousel(items);
         </code></pre>
-        <pre><code class="js" data-trim>
+        <pre class="fragment"><code class="js" data-trim>
 prev.addEventListener("click", () => carousel.prev());
 next.addEventListener("click", () => carousel.next());
         </code></pre>
-        <pre><code class="js" data-trim>
+        <pre class="fragment"><code class="js" data-trim>
 carousel.addEventListener("hide-item", ({ detail }) => {
     detail.hidden = true;
 });
@@ -404,7 +403,7 @@ carousel.addEventListener("end", () => next.disabled = true);
     <section>
 
         <p>Other OOP advantages are the ability to separate out work with a team.</p>
-        <p>If your objects only do one thing but you know know how to do that, you can ask someone to do it for you.</p>
+        <p>If your objects only do one thing but you don't know how to do that, you can ask someone to do it for you.</p>
 
         <p class="fragment">OOP has shaped programming for decades. Once you understand it, you'll see similar techniques in other places (such as CSS).</p>
 
@@ -468,10 +467,11 @@ var carousel = {
         <p>ES6 removes some of the necessary syntax.</p>
 
         <pre><code class="js" data-trim>
-var carousel = {
+let carousel = {
 
     items: [/* &lt;div&gt;, &lt;div&gt;, &lt;div&gt; ... */],
 
+    // Look ma - no "function"!
     hideAll() {
         this.items.forEach(/* ... */);
     }
@@ -659,7 +659,7 @@ Carousel.prototype.render = function () {
 
     <section>
 
-        <p>Why didn't we just use <code>Carousel.prototype = Observer.prototype</code>?</p>
+        <p>Why didn't we just use<br><code>Carousel.prototype = Observer.prototype</code>?</p>
 
         <pre class="fragment"><code class="js" data-trim>
 function Carousel() {
@@ -685,8 +685,21 @@ observer.render(); // -&gt; renders carousel
 
     <section>
 
-        <p>It didn't take long before we simplified that.</p>
+        <p>It didn't take long before we simplified this weird sub-classing process.</p>
 
+        <pre><code class="js" data-trim>
+// Only needed when supporting IE8.
+if (!Object.create) {
+    Object.create = function (source, settings) {
+        if (settings) {
+            throw new Error("Sorry, browser too stupid.");
+        }
+        var F = function () {};
+        F.prototype = source.prototype;
+        return new F();
+    };
+}
+        </code></pre>
         <pre><code class="js" data-trim>
 function Carousel() {
     // ...
@@ -696,6 +709,10 @@ Carousel.prototype.render = function () {
     // ...
 };
         </code></pre>
+
+        <aside class="notes">
+            <p>The second parameter allows you to define additional properties in the <code>Object.defineProperty</code> form.</p>
+        </aside>
 
     </section>
 
@@ -726,6 +743,8 @@ Carousel.prototype = Object.assign(
     </section>
 
     <section>
+
+        <p><code>Object.assign</code> modifies the first object, so we could also do this.</p>
 
         <pre><code class="js" data-trim>
 function Carousel() {
@@ -797,16 +816,16 @@ list.items; // -&gt; ["one"]
         <p>Solution: always create properties inside methods.</p>
 
         <pre><code class="js" data-trim>
+// Good: properties created in the method.
+function List() {
+    this.items = [];
+}
+
 // Bad: properties on the prototype.
 function List() {
     // ...
 }
 List.prototype.items = [];
-
-// Good: properties created in the method.
-function List() {
-    this.items = [];
-}
         </code></pre>
 
     </section>
@@ -826,6 +845,7 @@ var Animal = Class.create({
     }
 });
 var Cat = Class.create(Animal, {
+    // First argument must be called "$super".
     initialize: function ($super) {
         $super("meow");
     }
@@ -891,7 +911,7 @@ carousel.render(); // renders &amp; dispatches "render" event.
 
     <section>
         <p>JavaScript's <code>class</code> syntax doesn't work in IE11 but <code>class</code> is just syntactic sugar for the <code>prototype</code> style.</p>
-        <p>This means that we can transpile <code>class</code> to with in IE11.</p>
+        <p>This means that we can transpile <code>class</code> using something like Babel to work in IE11.</p>
     </section>
 
 </section>
@@ -928,7 +948,7 @@ function Observer() {
         </code></pre>
         <pre><code class="js" data-trim>
 var observer = new Observer();
-observer.addEventListener("my-event", function () { /* ... */ });
+observer.addEventListener("my-event", function () {/* ... */});
         </code></pre>
 
     </section>
@@ -969,7 +989,14 @@ carousel.render(); // renders &amp; dispatches "render" event.
     </section>
 
     <section>
-        <p>Developers don't tend to like "Crockford Classless" but you might see it from time to time.</p>
+
+        <p>There are also some disadvantages.</p>
+        <ul>
+            <li>The <code>prototype</code> property isn't used so you can't modify it, making debugging harder.</li>
+            <li>Methods are re-created every time an object is instantiated instead of just being referenced. This increases memory usage.</li>
+            <li>It can't work with <code>class</code> - once you start using "Crockford Classless", you have to keep using it.</li>
+        </ul>
+
     </section>
 
 </section>
@@ -987,8 +1014,8 @@ carousel.render(); // renders &amp; dispatches "render" event.
         <p><code>new</code> creates a new instance:</p>
         <ol>
             <li>It creates a new object (<code>var o = {};</code>).</li>
-            <li>It gives the new object access to the constructor's <code>prototype</code> property (<code class="fragment highlight-red visible">o.__proto__ = Thing.prototype</code>).</li>
-            <li>It sets the context of that object as <code>this</code> (<code>o === this</code>).</li>
+            <li>It gives the new object access to the constructor's <code>prototype</code> property<br>(<code class="fragment highlight-red visible">o.__proto__ = Thing.prototype</code>).</li>
+            <li>It sets the context of that object as <code>this</code><br>(<code>o === this</code>).</li>
             <li>It returns the object unless the constructor function returns its own object (<code>return o</code>).</li>
         </ol>
 
@@ -1041,7 +1068,7 @@ var carousel = {
 };
 
 carousel.hideAll(); // hides &lt;div&gt;s
-carousel.feel.call({ items: [/* &lt;span&gt;, &lt;span&gt; ... */] });
+carousel.hideAll.call({ items: [/* &lt;span&gt;, &lt;span&gt; ... */] });
 // hides &lt;span&gt;s
             </code></pre>
 
@@ -1084,6 +1111,29 @@ class Carousel extends Observer {
         that.items.forEach(function (item) {
             that.dispatchEvent("hide-item", item);
         });
+    }
+    // ...
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+var carousel = new Carousel();
+carousel.hideAll();
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p><code>call</code> and <code>apply</code> will allow you to define the context. <code>bind</code> will set it.</p>
+
+        <pre><code class="js" data-trim>
+class Carousel extends Observer {
+    constructor() {
+        this.boundHideItems = this.hideItems.bind(this);
+    }
+    // ...
+    hideAll() {
+        that.items.forEach(this.boundHideItems);
     }
     // ...
 }
@@ -1280,10 +1330,10 @@ class Person {
 var person = new Person("JLo");
 
 // Good: only calling your own method.
-sauce.getName(); // -&gt; "JLo"
+person.getName(); // -&gt; "JLo"
 
 // Bad: calling another method.
-sauce.getName().toLowerCase(); // -&gt; "jlo"
+person.getName().toLowerCase(); // -&gt; "jlo"
             </code></pre>
 
             <p class="fragment">Only chain if your methods return <code>this</code> like jQuery does.</p>
@@ -1458,7 +1508,7 @@ class Person {
 }
         </code></pre>
         <pre><code class="js" data-trim>
-// Bad: telling the pan what to do.
+// Bad: telling the job what to do.
 class Person {
 
     addJob(job) {

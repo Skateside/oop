@@ -377,7 +377,7 @@ for (let employee of employees) {
     <section>
 
         <p>An Iterator can not only abstract the data that it's serving, it can abstract the underlying data structure as well.</p>
-        <p>We've been using an array but it could also be an object ... <span class="fragment">or nothing at all.</span></p>
+        <p>We've been using an array but it could also be an object <span class="fragment"><br>... or nothing at all.</span></p>
 
     </section>
 
@@ -470,11 +470,11 @@ for (let value of iterable) {
 class Branch {
     constructor() { this.nodes = []; }
     addNode(node) { this.nodes.push(node); }
-    doSomething() { this.nodes.forEach((o) => o.doSomething()); }
+    execute() { this.nodes.forEach((o) => o.execute()); }
 }
 
 class Leaf {
-    doSomething() {/* ... */}
+    execute() {/* ... */}
 }
         </code></pre>
 
@@ -897,7 +897,9 @@ observer.addEventListener("my-event", () => {
     console.log("1");
     DOES_NOT_EXIST++;
 });
-observer.addEventListener("my-event", () => { console.log("2"); });
+observer.addEventListener("my-event", () => {
+    console.log("2");
+});
 observer.dispatchEvent("my-event");
 
 // Logs: 1
@@ -964,7 +966,9 @@ observer.addEventListener("my-event", () => {
     console.log("1");
     DOES_NOT_EXIST++;
 });
-observer.addEventListener("my-event", () => { console.log("2"); });
+observer.addEventListener("my-event", () => {
+    console.log("2");
+});
 observer.dispatchEvent("my-event");
 
 // Logs: 1
@@ -1029,7 +1033,7 @@ widget.addEventListener("something", () => gizmo.doRelated());
         <p>You can create an interface separately from your object.</p>
 
         <pre><code class="js" data-trim>
-// Remember the Carousel example?
+// Remember the Carousel example from last week?
 carousel.addEventListener("hide-item", ({ detail }) => {
     detail.hidden = true;
 });

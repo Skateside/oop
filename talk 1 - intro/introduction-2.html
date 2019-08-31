@@ -694,7 +694,7 @@ if (!Object.create) {
         if (settings) {
             throw new Error("Sorry, browser too stupid.");
         }
-        var F = function () {};
+        function F() {};
         F.prototype = source.prototype;
         return new F();
     };

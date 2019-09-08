@@ -27,7 +27,6 @@
 
     <section>
         <h2>What is a design pattern?</h2>
-        <p style="color:fuchsia"><em>todo</em></p>
     </section>
 
     <section>
@@ -67,7 +66,7 @@
                     <li class="js--fragment--one // display">Command</li>
                     <li>Interpreter</li>
                     <li class="js--fragment--two // display">Iterator</li>
-                    <li>Mediator</li>
+                    <li class="js--fragment--two // display">Mediator</li>
                     <li>Memento</li>
                     <li class="js--fragment--one js--fragment--two // display">Observer</li>
                     <li>State</li>
@@ -94,14 +93,25 @@
 
         <div class="fragment" id="this-talk"></div>
 
+        <aside class="notes">
+            <p>Design Patters (1994) by Erich Gamma, Richard Helm, Ralph Johnson and John Vlissides ("Gang of Four") for C++.</p>
+            <p>Pro JavaScript Design Patterns (2008) by Ross Harmes and Dustin Diaz.</p>
+        </aside>
+
     </section>
 
 </section>
 
-<section>
+<section><!-- Singleton -->
 
     <section>
+
         <h2>Singleton Pattern</h2>
+
+        <aside class="notes">
+            <p>Pattern 1/8</p>
+        </aside>
+
     </section>
 
     <section>
@@ -187,12 +197,13 @@ let s1_again = singleton;
         <div class="fragment">
 
             <p>Pros: no function overhead, super efficient.</p>
-            <p>Cons: doesn't use <code>class</code> keyword and therefore seems inferior.</p>
+            <p>Cons: doesn't use <code>class</code> keyword and therefore seems inferior. It also looks more like data than structure.</p>
 
         </div>
 
         <aside class="notes">
             <p>Pro tip: programmers are super petty.</p>
+            <p>I recommend <strong>Option 2</strong>.</p>
         </aside>
 
     </section>
@@ -202,104 +213,112 @@ let s1_again = singleton;
         <h3>When to use the Singleton Pattern</h3>
 
         <p class="fragment">Er ...</p>
-        <p class="fragment">Honestly, every time I've used this pattern, I've regretted it.</p>
+        <p class="fragment">Honestly, almost every time I've used this pattern, I've regretted it.</p>
 
         <aside class="notes">
-            <p>I'm showing you so you recognise it.</p>
-        </aside>
-
-    </section>
-
-</section>
-
-<section>
-
-    <section>
-        <h2>Iterator Pattern</h2>
-    </section>
-
-    <section>
-
-        <p>The iterator pattern exposes elements of an object sequentially without exposing the underlying data structure.</p>
-
-        <aside class="notes">
-            <p>It's, like, <em>way</em> cooler than it sounds.</p>
+            <p>Last week's advice</p>
+            <ul>
+                <li>Keep your hands to yourself!</li>
+                <li>Ask, don't take!</li>
+                <li>Don't leave your toys lying around!</li>
+                <li>Don't talk to strangers!</li>
+            </ul>
         </aside>
 
     </section>
 
     <section>
 
-        <p>The key part of an Iterator is the <code>next</code> method which returns an object.</p>
+        <p>Remember last week's advice of "don't leave your toys lying around"? A singleton is a good way around that.</p>
 
         <pre><code class="js" data-trim>
-class Iterator {
-    constructor(iterable = []) {
-        this.index = 0;
-        this.length = iterable.length;
-        this.iterable = iterable;
+Singleton.get().setData("abc", 123);
+
+// ...
+
+let value = Singleton.get().getData("abc"); // -> 123
+        </code></pre>
+
+        <p class="fragment">This is why JavaScript namespaces tend to be objects. In OOP terms, they're singletons.</p>
+
+    </section>
+
+    <section>
+
+        <p>Singletons can be useful when the same input would create the same result.</p>
+
+        <pre><code class="js" data-trim>
+class Hasher {
+    static cache = {};
+    static create(seed) {
+        if (!this.cache[seed]) {
+            this.cache[seed] = new this(seed);
+        }
+        return this.cache[seed];
     }
-    next() {
-        let value = this.iterable[this.index];
-        this.index += 1;
-        return Object.freeze({
-            value,
-            done: this.index > this.length
-        });
+    constructor(seed) {
+        // ...
     }
-}
-        </code></pre>
-
-        <aside class="notes">
-            <p>A "Crockford Classless" version of this wouldn't expose the properties at all.</p>
-        </aside>
-
-    </section>
-
-    <section>
-
-        <p>The <code>next</code> method will return the value and whether or not the loop is complete.</p>
-        <p>The final entry shouldn't have a value - any value will be ignored.</p>
-
-        <pre><code class="js" data-trim>
-let iterator = new Iterator(["one", "two", "three"]);
-iterator.next(); // -&gt; { value: "one", done: false }
-iterator.next(); // -&gt; { value: "two", done: false }
-iterator.next(); // -&gt; { value: "three", done: false }
-iterator.next(); // -&gt; { value: undefined, done: true }
-        </code></pre>
-
-        <aside class="notes">
-            <p>I know what you're thinking: why not just loop over an array?</p>
-        </aside>
-
-    </section>
-
-    <section>
-
-        <p>Have you heard of a <code>for...of</code> loop?</p>
-
-        <pre><code class="js" data-trim>
-for (let item of ["one", "two", "three"]) {
-    console.log(item);
-}
-// Logs: "one"
-// Logs: "two"
-// Logs: "three"
-        </code></pre>
-
-        <div class="fragment">
-
-            <p>JavaScript allows you to define custom functionality for that using the <code>Symbol.iterator</code> method.</p>
-            <p>That method needs to return an iterator.</p>
-
-        </div>
-
-        <pre class="fragment"><code class="js" data-trim>
-class Iterator {
     // ...
-    [Symbol.iterator]() {
-        return this;
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+let seedABC = Hasher.create("abc");
+let seedDEF = Hasher.create("def");
+// ...
+let seed2 = Hasher.create("abc"); // same instance as seedABC.
+        </code></pre>
+
+        <aside class="notes">
+            <p>Very useful if this does a lot of heavy-duty work (AJAX, DOM traversal etc.).</p>
+            <p>This is more a case of <strong>memoisation</strong> than a singleton, but it's a similar idea.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>Before creating a singleton, make sure you have a good reason why you will only ever need one instance.</p>
+        <p class="fragment">Pro tip: "there's only one on the page" is not a good reason.</p>
+
+    </section>
+
+</section><!-- Singleton -->
+
+<section><!-- Mediator -->
+
+    <section>
+
+        <h2>Mediator Pattern</h2>
+
+        <aside class="notes">
+            <p>Pattern 2/8</p>
+        </aside>
+
+    </section>
+
+    <section>
+        <p>When you tightly couple objects, usually you just need the output of one object's method to be passed to another object's method. The mediator pattern does that.</p>
+        <p class="fragment">Remember last week's advice "don't talk to strangers"? The mediator pattern breaks this advice so that other objects don't.</p>
+    </section>
+
+    <section>
+
+        <p>In this example, <code>Thermometer</code> is tightly coupled to <code>Temperature</code>.</p>
+
+        <pre><code class="js" data-trim>
+class Temperature {
+    constructor(value) {}
+    celsius() {}
+    fahrenheit() {}
+}
+
+class Thermometer {
+    constructor(temperature) {
+        this.temperature = temperature;
+    }
+    display() {
+        alert(this.temperature.celsius() + "°C");
     }
 }
         </code></pre>
@@ -308,24 +327,187 @@ class Iterator {
 
     <section>
 
-        <pre><code class="js" data-trim>
-let iterator = new Iterator(["one", "two", "three"]);
+        <p>With a small re-write of <code>Thermometer</code>, we can keep it loosely coupled from <code>Temperature</code>.</p>
 
-for (let item of iterator) {
-    console.log(item);
+        <pre><code class="js" data-trim>
+class Thermometer {
+    display(celsius) {
+        alert(celsius + "°C");
+    }
 }
 
-// Logs: "one"
-// Logs: "two"
-// Logs: "three"
+class ThermalMediator {
+    constructor(temperature, thermometer) {
+        this.temperature = temperature;
+        this.thermometer = thermometer;
+    }
+    display() {
+        this.thermometer.display(this.temperature.celsius());
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Now that they're loosely coupled, we can test <code>Thermometer</code> without having to create a <code>Temperature</code> object.</p>
+
+        <pre class="tall"><code class="js" data-trim>
+describe("Thermometer#display()", () => {
+
+    let globalAlert = window.alert;
+    let thermometer = new Thermometer();
+
+    it("should alert when given a number", () => {
+        let isAlerted = false;
+        window.alert = () => isAlerted = true;
+        thermometer.display(20);
+        chai.assert.isTrue(isAlerted);
+        window.alert = globalAlert;
+    });
+
+});
+        </code></pre>
+
+        <aside class="notes">
+            <p>Maybe <code>Temperature</code> has to look up height above sea level or air pressure?</p>
+            <p>What should happen if we pass ig a string or an object?</p>
+            <p>Test suite is <strong>mocha</strong> and <strong>chai</strong>.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>Using a mediator, we don't need to know how the objects interact, we just need to know that the mediator will take care of it.</p>
+
+        <pre><code class="js" data-trim>
+// was:
+thermometer.display(temperature.celsius());
+
+// now:
+mediator.display();
+        </code></pre>
+
+    </section>
+    <section>
+
+        <p>If we need to update how those objects work, we only need to update the mediator.</p>
+
+        <pre><code class="js" data-trim>
+class ThermalMediator {
+    display() {
+        this.thermometer.display(
+            this.temperature.celsius(),
+            this.temperature.getSymbol("celsius")
+        );
+    }
+}
+
+// still:
+mediator.display();
+        </code></pre>
+
+    </section>
+
+</section><!-- Mediator -->
+
+<section><!-- Factory -->
+
+    <section>
+
+        <h2>Factory Pattern</h2>
+
+        <aside class="notes">
+            <p>Pattern 3/8</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>Factories build things.</p>
+        <p>If you need to create the same thing multiple times, a factory can help.</p>
+        <p class="fragment">Because you usually care about what a factory builds more than the factory, they're usually singltons.</p>
+
+    </section>
+
+    <section>
+
+        <p>Here's an example of a really simple factory.</p>
+
+        <pre class="tall"><code class="js" data-trim>
+class Factory {
+    static get() {
+        if (!this.instance) {
+            this.instance = new this();
+        }
+        return this.instance;
+    }
+    constructor() {
+        this.factories = {};
+    }
+    add(name, factory) {
+        this.factories[name] = factory;
+    }
+    build(name, ...args) {
+        return this.factory[name](...args);
+    }
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>Do you recognise the singleton pattern?</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>We add a few factories ready to be used.</p>
+
+        <pre class="tall"><code class="js" data-trim>
+let factory = Factory.get();
+
+factory.add("popup", (id) => {
+    let popup = new Popup(document.getElementById(id));
+    document.addEventListener("click", (e) => {
+        if (e.target.matches(`[data-target="#${id}"]`)) {
+            e.preventDefault();
+            popup.show();
+        }
+    });
+    return popup;
+});
+
+factory.add("disclosure", (trigger) => {
+    return new Disclosure(trigger);
+});
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>We can build anytime we want.</p>
+
+        <pre><code class="js" data-trim>
+let factory = Factory.get();
+let popup = factory.build("popup", "my-id");
         </code></pre>
 
         <div class="fragment">
 
-            <p>It also activates JavaScript's spread operator.</p>
+            <p>We can also dynamically build as we need.</p>
 
             <pre><code class="js" data-trim>
-[...iterator]; // -&gt; ["one", "two", "three"]
+document.querySelectorAll(".popup[id]").forEach((popup) => {
+    popup.instance = factory.build("popup", popup.id);
+});
+document.querySelectorAll(".disclosure").forEach((trigger) => {
+    trigger.instance = factory.build("disclosure", trigger);
+});
             </code></pre>
 
         </div>
@@ -334,324 +516,33 @@ for (let item of iterator) {
 
     <section>
 
-        <p>An Iterator allows the items to be converted while being looped over without revealing that information.</p>
-
-        <pre><code class="js" data-trim>
-class Name {
-    constructor(name) { this.name = name; }
-    setAlias(alias) { this.alias = alias; }
-    getName() { return this.alias || this.name; }
-}
-
-class Employees extends Iterator {
-    next() {
-        let value = this.iterable[this.index].getName();
-        // ...
-    }
-}
-        </code></pre>
-    </section>
-    <section>
-
-        <p>As far as our loop knows, we just have an array of strings.</p>
-
-        <pre><code class="js" data-trim>
-let mark = new Name("Mark");
-let james = new Name("James");
-let jlo = new Name("James");
-jlo.setAlias("JLo");
-
-let employees = new Employees([mark, james, jlo])
-
-for (let employee of employees) {
-    console.log(employee);
-}
-
-// Logs: "Mark"
-// Logs: "James"
-// Logs: "JLo"
-        </code></pre>
-
-        <aside class="notes">
-            <p>If we need to do something like HTML-entities -&gt; UTF-8 or enforce capitalisation, it won't polute the array.</p>
-        </aside>
-
-    </section>
-
-    <section>
-
-        <p>An Iterator can not only abstract the data that it's serving, it can abstract the underlying data structure as well.</p>
-        <p>We've been using an array but it could also be an object <span class="fragment"><br>... or nothing at all.</span></p>
-
-    </section>
-
-    <section>
-
-        <pre><code class="js" data-trim>
-class Range extends Iterator {
-    constructor(start, end) {
-        super();
-        this.start = start;
-        this.length = end - start;
-    }
-    next() {
-        this.iterable[this.index] = this.start;
-        this.start += 1;
-        return super.next();
-    }
-}
-        </code></pre>
-
-        <pre><code class="js" data-trim>
-for (let number of new Range(1, 5)) {
-    console.log(number);
-}
-
-// Logs: 1
-// Logs: 2
-// Logs: 3
-// Logs: 4
-        </code></pre>
-
-        <aside class="notes">
-            <p>Here's an Iterator that doesn't populate its data until it needs to.</p>
-        </aside>
-
-    </section>
-
-    <section>
-
-        <p>If this interests you, JavaScript also has generators to simplify iterators.</p>
-
-        <pre><code class="js" data-trim>
-let iterable = {
-    *[Symbol.iterator]() {
-        yield "one";
-        yield "two";
-        yield "three";
-    }
-}
-
-for (let value of iterable) {
-    console.log(value);
-}
-
-// Logs: "one"
-// Logs: "two"
-// Logs: "three"
-        </code></pre>
-
-        <aside class="notes">
-            <p>There are precious few times you can use this, but when you get the chance it's cool as hell.</p>
-        </aside>
-
-    </section>
-
-</section>
-
-<section>
-
-    <section>
-        <h2>Composite Pattern</h2>
-    </section>
-
-    <section>
-
-        <p>The Composite pattern takes zero-or-more similar objects and treats them as one object.</p>
-
-        <figure class="fragment">
-            <img src="./branch-leaves.png" alt="" class="mini-image">
-            <figcaption>It does this by having "branches" that contain objects and "leaves" which are the objects.</figcaption>
-        </figure>
-
-    </section>
-
-    <section>
-
-        <p>In abstract terms, it looks like this.</p>
-
-        <pre><code class="js" data-trim>
-class Branch {
-    constructor() { this.nodes = []; }
-    addNode(node) { this.nodes.push(node); }
-    execute() { this.nodes.forEach((o) => o.execute()); }
-}
-
-class Leaf {
-    execute() {/* ... */}
-}
-        </code></pre>
-
-        <p>The important thing is that either a <code>Branch</code> or a <code>Leaf</code> can be passed to <code>addNode</code>.</p>
-
-    </section>
-
-    <section>
-
-        <form class="o-pack" id="checkboxes-input">
-            <input type="number" min="1" max="10" step="1" placeholder="1 - 10" required aria-label="Number of items" name="parents">
-            <input type="number" min="1" max="10" step="1" placeholder="1 - 10" required aria-label="Maximum depth" name="depth">
-            <input type="number" min="1" max="10" step="1" placeholder="1 - 10" required aria-label="Maximum number of children" name="children">
-            <button type="submit">Generate</button>
-        </form>
-
-        <div class="checkboxes" id="checkboxes-output">
-        </div>
-
-        <aside class="notes">
-            <p>This is <strong>{1}</strong> number of items, a maximum depth of <strong>{2}</strong> and each having a maximum of <strong>{3}</strong> children.</p>
-            <p>This is the composite pattern except the branch and leaf are the same thing.</p>
-        </aside>
-
-    </section>
-
-    <section>
-
-        <p>The checkbox knows about its immediate children and it's closest parent.</p>
-
-        <pre><code class="js" data-trim>
-class Checkbox {
-    constructor(input) {
-        this.input = input;
-        this.children = [];
-        input.addEventListener("change", () => {
-            this.setState(input.checked);
-        });
-    }
-    setParent(parent) { this.parent = parent; }
-    addChild(child) {
-        child.setParent(this);
-        this.children.push(child);
-    }
-    // ...
-}
-        </code></pre>
-
-    </section>
-    <section>
-
-        <pre class="tall"><code class="js" data-trim>
-class Checkbox {
-    // ...
-    setState(state) {
-        if (this.isSetting) {
-            return;
-        }
-        this.isSetting = true;
-        if (typeof state === "boolean") {
-            this.input.indeterminate = false;
-            this.input.checked = state;
-            this.children.forEach((kid) => kid.setState(state));
-        } else if (state === "mixed") {
-            this.input.checked = false;
-            this.input.indeterminate = true;
-        }
-        if (this.parent) {
-            this.parent.update();
-        }
-        this.isSetting = false;
-    }
-    // ...
-}
-        </code></pre>
-
-        <aside class="notes">
-            <p>This is the Composite Pattern magic.</p>
-            <p>Because we can check a checkbox, it updates its children which then update the parent, we need the <code>isSetting</code> flag to prevent infinite loops.</p>
-        </aside>
-
-    </section>
-    <section>
-
-        <pre class="tall"><code class="js" data-trim>
-class Checkbox {
-    // ...
-    update() {
-        let mixed = 0; let checked = 0;
-        this.children.forEach((child) => {
-            let state = child.getState();
-            if (state === "mixed") {
-                mixed += 1;
-            } else if (state) {
-                checked += 1;
-            }
-        });
-        if (checked === this.children.length) {
-            this.setState(true);
-        } else if (mixed || checked) {
-            this.setState("mixed");
-        } else {
-            this.setState(false);
-        }
-    }
-    // ...
-}
-        </code></pre>
-
-        <aside class="notes">
-            <p>This method checks how many childen are checked. If they all are, we should be checked.</p>
-        </aside>
-
-    </section>
-    <section>
-
-        <pre><code class="js" data-trim>
-class Checkbox {
-    // ...
-    getState() {
-        return (
-            this.input.indeterminate
-            ? "mixed"
-            : this.input.checked
-        );
-    }
-}
-        </code></pre>
-
-    </section>
-
-    <section>
-
-        <p>We do this dynamically, but it boils down to this:</p>
-
-        <pre><code class="js" data-trim>
-let c_1 = new Checkbox(document.getElementById("c_1"));
-let c_1_1 = new Checkbox(document.getElementById("c_1_1"));
-let c_1_2 = new Checkbox(document.getElementById("c_1_2"));
-
-c_1.addChild(c_1_1);
-c_1.addChild(c_1_2);
-        </code></pre>
-
-    </section>
-
-    <section>
-
-        <h3>Benefits of the Composite Pattern</h3>
+        <h3>When to use the Factory Pattern</h3>
 
         <ul>
-            <li>You don't have to worry about the structure as a whole, just how a single node works.</li>
-            <li>It can handle any level of nesting.</li>
+            <li class="fragment">If creating an instance requires a lot of set-up.</li>
+            <li class="fragment">If you need to dynamically create objects based on an environment you can't predict or user input.</li>
         </ul>
 
-        <p>Downsides include the potential to use a lot of memory.</p>
-        <pre><code class="js" data-trim>
-// How many checkbox will this check?
-checkbox.setState(true);
-        </code></pre>
+        <p class="fragment">Use the factory pattern sparingly. It adds complexity to your code and it's overkill for a simple class instantiation.</p>
 
         <aside class="notes">
-            <p>Trick question: depends how many children there are and how many children they have.</p>
+            <p>If you class requires a lot of setup, it might be too complicated.</p>
         </aside>
 
     </section>
 
-</section>
+</section><!-- Factory -->
 
-<section>
+<section><!-- Adapter -->
 
     <section>
+
         <h2>Adapter Pattern</h2>
+
+        <aside class="notes">
+            <p>Pattern 4/8</p>
+        </aside>
+
     </section>
 
     <section>
@@ -711,6 +602,7 @@ class FormTracker {
 
         <aside class="notes">
             <p>We actually check adapters in a Last-In-First-Out order.</p>
+            <p>Do you recognise the factory pattern?</p>
         </aside>
 
     </section>
@@ -772,7 +664,7 @@ class ValidationAdapter {
 
         <p>Any form relying on HTML5 form validation gets tracked like this:</p>
 
-        <pre><code class="js" data-trim>
+        <pre class="tall"><code class="js" data-trim>
 class NativeValidationAdapter extends ValidationAdapter {
     static check(form) {
         return (
@@ -784,7 +676,8 @@ class NativeValidationAdapter extends ValidationAdapter {
         return [...this.form.querySelectorAll("...")]
             .filter((element) => !element.validity.valid)
             .map((element) => ({
-                element, message: element.validationMessage
+                element,
+                message: element.validationMessage
             }));
     }
 }
@@ -819,9 +712,11 @@ class JqueryValidationAdapter extends ValidationAdapter {
 
         <p>The CO2 calculator had a custom validator that just changed the input border colour.</p>
 
-        <pre><code class="js" data-trim>
+        <pre class="tall"><code class="js" data-trim>
 class CO2CalculatorValidationAdapter extends ValidationAdapter {
-    static check(form) { return form.id === "co2-calculator"; }
+    static check(form) {
+        return form.id === "co2-calculator";
+    }
     getErrors() {
         return [...this.form.querySelectorAll("...")]
             .filter((element) => this.isErrorElement(element))
@@ -844,12 +739,18 @@ class CO2CalculatorValidationAdapter extends ValidationAdapter {
 
     </section>
 
-</section>
+</section><!-- Adapter -->
 
-<section>
+<section><!-- Observer -->
 
     <section>
+
         <h2>Observer Pattern</h2>
+
+        <aside class="notes">
+            <p>Pattern 5/8</p>
+        </aside>
+
     </section>
 
     <section>
@@ -1054,12 +955,35 @@ carousel.addEventListener("end", () => next.disabled = true);
 
     </section>
 
-</section>
+    <section>
 
-<section>
+        <p>Everytime you look at your code and think:</p>
+        <p><q>I need to know when ...</q></p>
+        <p>... you need an observer.</p>
+
+        <div class="fragment">
+            <p>If you've got an observer, don't be afraid to dispatch events you don't care about now.</p>
+            <p>When something important happens, dispatch an event. You may need to know when that was in the future.</p>
+        </div>
+
+        <aside class="notes">
+            <p>"Something important" is very subjective. Don't to it when <em>anything</em> happens, use your common sense.</p>
+        </aside>
+
+    </section>
+
+</section><!-- Observer -->
+
+<section><!-- Decorator -->
 
     <section>
+
         <h2>Decorator Pattern</h2>
+
+        <aside class="notes">
+            <p>Pattern 6/8</p>
+        </aside>
+
     </section>
 
     <section>
@@ -1070,8 +994,8 @@ carousel.addEventListener("end", () => next.disabled = true);
 
         <pre class="tall"><code class="js" data-trim>
 class Sale {
-    static decorators = Object.create(null);
-    constructor(price = 100) {
+    static decorators = {};
+    constructor(price) {
         this.price = price;
     }
     getPrice() {
@@ -1109,7 +1033,7 @@ Sale.decorators.tax = {
         </code></pre>
 
         <pre class="fragment"><code class="js" data-trim>
-let sale = new Sale();
+let sale = new Sale(100);
 sale.getPrice(); // -> 100
 
 sale = sale.decorate("halfPrice");
@@ -1157,7 +1081,7 @@ Sale.decorators.tax = {
         </code></pre>
 
         <pre class="fragment"><code class="js" data-trim>
-let sale = new Sale();
+let sale = new Sale(100);
 sale.getPrice(); // -> 100
 
 sale.decorate("halfPrice");
@@ -1180,19 +1104,472 @@ sale.getPrice(); // -> 60
 
     </section>
 
-</section>
+</section><!-- Decorator -->
+
+<section><!-- Composite -->
+
+    <section>
+
+        <h2>Composite Pattern</h2>
+
+        <aside class="notes">
+            <p>Pattern 7/8</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>The Composite pattern takes zero-or-more similar objects and treats them as one object.</p>
+
+        <figure class="fragment">
+            <img src="./branch-leaves.png" alt="" class="mini-image">
+            <figcaption>It does this by having "branches" that contain objects and "leaves" which are the objects.</figcaption>
+        </figure>
+
+    </section>
+
+    <section>
+
+        <p>In abstract terms, it looks like this.</p>
+
+        <pre><code class="js" data-trim>
+class Branch {
+    constructor() { this.nodes = []; }
+    addNode(node) { this.nodes.push(node); }
+    execute() { this.nodes.forEach((o) => o.execute()); }
+}
+
+class Leaf {
+    execute() {/* ... */}
+}
+        </code></pre>
+
+        <p>The important thing is that either a <code>Branch</code> or a <code>Leaf</code> can be passed to <code>addNode</code>.</p>
+
+        <aside class="notes">
+            <p>This is an example of <strong>Polymorphism</strong>.</p>
+
+    </section>
+
+    <section>
+
+        <form class="o-pack" id="checkboxes-input">
+            <input type="number" min="1" max="10" step="1" placeholder="1 - 10" required aria-label="Number of items" name="parents">
+            <input type="number" min="1" max="10" step="1" placeholder="1 - 10" required aria-label="Maximum depth" name="depth">
+            <input type="number" min="1" max="10" step="1" placeholder="1 - 10" required aria-label="Maximum number of children" name="children">
+            <button type="submit">Generate</button>
+        </form>
+
+        <div class="checkboxes" id="checkboxes-output">
+        </div>
+
+        <aside class="notes">
+            <p>This is <strong>{1}</strong> number of items, a maximum depth of <strong>{2}</strong> and each having a maximum of <strong>{3}</strong> children.</p>
+            <p>This is the composite pattern except the branch and leaf are the same thing.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>The checkbox knows about its immediate children and it's closest parent.</p>
+
+        <pre class="tall"><code class="js" data-trim>
+class Checkbox {
+    constructor(input) {
+        this.input = input;
+        this.children = [];
+        input.addEventListener("change", () => {
+            this.setState(input.checked);
+        });
+    }
+    setParent(parent) {
+        this.parent = parent;
+    }
+    addChild(child) {
+        child.setParent(this);
+        this.children.push(child);
+    }
+    // ...
+}
+        </code></pre>
+
+    </section>
+    <section>
+
+        <pre class="tall"><code class="js" data-trim>
+class Checkbox {
+    // ...
+    setState(state) {
+        if (this.isSetting) {
+            return;
+        }
+        this.isSetting = true;
+        if (typeof state === "boolean") {
+            this.input.indeterminate = false;
+            this.input.checked = state;
+            this.children.forEach((kid) => kid.setState(state));
+        } else if (state === "mixed") {
+            this.input.checked = false;
+            this.input.indeterminate = true;
+        }
+        if (this.parent) {
+            this.parent.update();
+        }
+        this.isSetting = false;
+    }
+    // ...
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>This is the Composite Pattern magic.</p>
+            <p>Because we can check a checkbox, it updates its children which then update the parent, we need the <code>isSetting</code> flag to prevent infinite loops.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <pre class="tall"><code class="js" data-trim>
+class Checkbox {
+    // ...
+    update() {
+        let mixed = 0; let checked = 0;
+        this.children.forEach((child) => {
+            let state = child.getState();
+            if (state === "mixed") {
+                mixed += 1;
+            } else if (state) {
+                checked += 1;
+            }
+        });
+        if (checked === this.children.length) {
+            this.setState(true);
+        } else if (mixed || checked) {
+            this.setState("mixed");
+        } else {
+            this.setState(false);
+        }
+    }
+    // ...
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>This method checks how many childen are checked. If they all are, we should be checked.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <pre><code class="js" data-trim>
+class Checkbox {
+    // ...
+    getState() {
+        return (
+            this.input.indeterminate
+            ? "mixed"
+            : this.input.checked
+        );
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>We do this dynamically, but it boils down to this:</p>
+
+        <pre><code class="js" data-trim>
+let c_1 = new Checkbox(document.getElementById("c_1"));
+let c_1_1 = new Checkbox(document.getElementById("c_1_1"));
+let c_1_2 = new Checkbox(document.getElementById("c_1_2"));
+
+c_1.addChild(c_1_1);
+c_1.addChild(c_1_2);
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <h3>Benefits of the Composite Pattern</h3>
+
+        <ul>
+            <li>You don't have to worry about the structure as a whole, just how a single node works.</li>
+            <li>It can handle any level of nesting.</li>
+        </ul>
+
+        <p>Downsides include the potential to use a lot of memory.</p>
+        <pre><code class="js" data-trim>
+// How many checkbox will this check?
+checkbox.setState(true);
+        </code></pre>
+
+        <aside class="notes">
+            <p>Trick question: depends how many children there are and how many children they have.</p>
+        </aside>
+
+    </section>
+
+</section><!-- Composite -->
+
+<section><!-- Iterator -->
+
+    <section>
+
+        <h2>Iterator Pattern</h2>
+
+        <aside class="notes">
+            <p>Pattern 8/8</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>The iterator pattern exposes elements of an object sequentially without exposing the underlying data structure.</p>
+
+        <aside class="notes">
+            <p>It's, like, <em>way</em> cooler than it sounds.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>The key part of an Iterator is the <code>next</code> method which returns an object.</p>
+
+        <pre><code class="js" data-trim>
+class Iterator {
+    constructor(iterable = []) {
+        this.index = 0;
+        this.length = iterable.length;
+        this.iterable = iterable;
+    }
+    next() {
+        let value = this.iterable[this.index];
+        this.index += 1;
+        return Object.freeze({
+            value,
+            done: this.index > this.length
+        });
+    }
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>A "Crockford Classless" version of this wouldn't expose the properties at all.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>The <code>next</code> method will return the value and whether or not the loop is complete.</p>
+        <p>The final entry shouldn't have a value - any value will be ignored.</p>
+
+        <pre><code class="js" data-trim>
+let iterator = new Iterator(["one", "two", "three"]);
+iterator.next(); // -&gt; { value: "one", done: false }
+iterator.next(); // -&gt; { value: "two", done: false }
+iterator.next(); // -&gt; { value: "three", done: false }
+iterator.next(); // -&gt; { value: undefined, done: true }
+        </code></pre>
+
+        <aside class="notes">
+            <p>I know what you're thinking: why not just loop over an array?</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>Have you heard of a <code>for...of</code> loop?</p>
+
+        <pre><code class="js" data-trim>
+for (let item of ["one", "two", "three"]) {
+    console.log(item);
+}
+// Logs: "one"
+// Logs: "two"
+// Logs: "three"
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>JavaScript allows you to define custom functionality for that using the <code>Symbol.iterator</code> method.</p>
+            <p>That method needs to return an iterator.</p>
+
+        </div>
+
+        <pre class="fragment"><code class="js" data-trim>
+class Iterator {
+    // ...
+    [Symbol.iterator]() {
+        return this;
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <pre><code class="js" data-trim>
+let iterator = new Iterator(["one", "two", "three"]);
+
+for (let item of iterator) {
+    console.log(item);
+}
+
+// Logs: "one"
+// Logs: "two"
+// Logs: "three"
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>It also activates JavaScript's spread operator.</p>
+
+            <pre><code class="js" data-trim>
+[...iterator]; // -&gt; ["one", "two", "three"]
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>An Iterator allows the items to be converted while being looped over without revealing that information.</p>
+
+        <pre><code class="js" data-trim>
+class Name {
+    constructor(name) { this.name = name; }
+    setAlias(alias) { this.alias = alias; }
+    getName() { return this.alias || this.name; }
+}
+
+class Employees extends Iterator {
+    next() {
+        let value = this.iterable[this.index].getName();
+        // ...
+    }
+}
+        </code></pre>
+    </section>
+    <section>
+
+        <p>As far as our loop knows, we just have an array of strings.</p>
+
+        <pre><code class="js" data-trim>
+let mark = new Name("Mark");
+let james = new Name("James");
+let jlo = new Name("James");
+jlo.setAlias("JLo");
+
+let employees = new Employees([mark, james, jlo])
+
+for (let employee of employees) {
+    console.log(employee);
+}
+
+// Logs: "Mark"
+// Logs: "James"
+// Logs: "JLo"
+        </code></pre>
+
+        <aside class="notes">
+            <p>If we need to do something like HTML-entities -&gt; UTF-8 or enforce capitalisation, it won't polute the array.</p>
+            <p>This is an example of <strong>abstraction</strong>.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>An Iterator can not only abstract the data that it's serving, it can abstract the underlying data structure as well.</p>
+        <p>We've been using an array but it could also be an object <span class="fragment"><br>... or nothing at all.</span></p>
+
+    </section>
+
+    <section>
+
+        <pre><code class="js" data-trim>
+class Range extends Iterator {
+    constructor(start, end) {
+        super();
+        this.start = start;
+        this.length = end - start;
+    }
+    next() {
+        this.iterable[this.index] = this.start;
+        this.start += 1;
+        return super.next();
+    }
+}
+        </code></pre>
+
+        <pre><code class="js" data-trim>
+for (let number of new Range(1, 5)) {
+    console.log(number);
+}
+
+// Logs: 1
+// Logs: 2
+// Logs: 3
+// Logs: 4
+        </code></pre>
+
+        <aside class="notes">
+            <p>Here's an Iterator that doesn't populate its data until it needs to.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>If this interests you, JavaScript also has generators to simplify iterators.</p>
+
+        <pre><code class="js" data-trim>
+let iterable = {
+    *[Symbol.iterator]() {
+        yield "one";
+        yield "two";
+        yield "three";
+    }
+}
+
+for (let value of iterable) {
+    console.log(value);
+}
+
+// Logs: "one"
+// Logs: "two"
+// Logs: "three"
+        </code></pre>
+
+        <aside class="notes">
+            <p>There are precious few times you can use this, but when you get the chance it's cool as hell.</p>
+        </aside>
+
+    </section>
+
+</section><!-- Iterator -->
 
 <!--
+*   Singleton Pattern.
+*   Mediator Pattern.
+*   Factory Pattern.
+*   Adapter Pattern.
+*   Observer Pattern.
 *   Decorator Pattern.
 *   Composite Pattern.
-*   Adapter Pattern.
-*   Observer Pattern. (but in OOP ...)
-    Factory Pattern. (it's mentioned a load of times ...)
-*   Iterator Pattern. (https://en.wikipedia.org/wiki/Iterator_pattern)
-*   Singleton Pattern.
+*   Iterator Pattern.
 -->
-
-
 
 <section id="questions">
     <h1>Any questions?</h1>

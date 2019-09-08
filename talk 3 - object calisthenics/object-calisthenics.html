@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="../reveal/css/reveal.css">
 <link rel="stylesheet" href="../reveal/css/theme/black.css">
 <link rel="stylesheet" href="../reveal/lib/css/zenburn.css">
-<!-- <link rel="stylesheet" href="../custom.css"> -->
+<link rel="stylesheet" href="../custom.css">
 <link rel="stylesheet" href="../reveal/css/print/pdf.css" media="print">
 
 <style>
@@ -52,9 +52,8 @@ How to do it?
         <pre><code class="js" data-trim>
 class Thing {
     constructor() {
-        // Indent level 1 :)
         while (something) {
-            // ...
+            // Indent level 1 :)
         }
     }
 }
@@ -64,9 +63,9 @@ class Thing {
 class Thing {
     constructor() {
         while (something) {
-            // Ident level 2 :(
+            // Indent level 1 :)
             if (query) {
-                // ...
+                // Ident level 2 :(
             }
         }
     }
@@ -97,7 +96,9 @@ class Table {
     drawTable(table) {
         let html = "&lt;table&gt;";
         table.forEach(
-            (row) =&gt; row.forEach(/* Indent level 2 :( */)
+            (row) =&gt; row.forEach(
+                (cell) =&gt; /* Indent level 2 :( */
+            )
         )
         return html + "&lt;/table&gt;";
     }
@@ -108,9 +109,9 @@ class Table {
 
     <section>
 
-        <p>Keeping to 1 indent level makes your code easier to follow because your function only does one thing.</p>
+        <p>Keeping to 1 indent level makes your code easier to follow because your functions only do one thing.</p>
 
-        <pre><code class="js" data-trim>
+        <pre class="tall"><code class="js" data-trim>
 class Table {
     drawTable(table) {
         let html = "&lt;table&gt;";
@@ -128,22 +129,28 @@ class Table {
 }
         </code></pre>
 
+        <p class="fragment">As a bonus, the method names are very easy to understand as a result.</p>
+
     </section>
 
     <section>
 
         <p>It also makes your code much easier to extend.</p>
 
-        <pre><code class="js" data-trim>
+        <pre class="tall"><code class="js" data-trim>
 class HeadingTable extends Table {
     drawRow(row) {
         let html = "&lt;tr&gt;";
-        row.forEach((cell, i) =&gt; html += this.decideType(cell, i));
+        row.forEach((cell, i) =&gt; {
+            html += this.decideType(cell, i);
+        });
         return html + "&lt;/tr&gt;";
     }
     decideType(cell, i) {
         return (
-            i === 0 ? this.drawHeading(cell) : this.drawCell(cell)
+            i === 0
+            ? this.drawHeading(cell)
+            : this.drawCell(cell)
         );
     }
     drawHeading(cell) {
@@ -187,12 +194,127 @@ describe("Table", () =&gt; {
 
     </section>
 
+    <section>
+
+        <p>An exception is when you need to break a string across lines or pass many parameters to a function.</p>
+
+        <pre class="tall"><code class="js" data-trim>
+class Thing {
+    longString() {
+        if (something) {
+            return (
+                "This is a really long string that would " +
+                "give me a horizontal scrollbar if I left " +
+                "it on one line."
+            );
+        }
+    }
+    manyParams() {
+        if (something) {
+            doSomethingComplicated(
+                firstParameter,
+                secondParameter,
+                // ...
+            )
+        }
+    }
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>You'll need to do this if you stick to 80 characters.</p>
+        </aside>
+
+    </section>
+
 </section>
 
 <section>
 
     <section>
         <h2>2. Don't Use <code>else</code></h2>
+    </section>
+
+    <section>
+
+        <p>Ever seen a huge nested conditional statement and you spend ages going through it trying to work out what it's doing?</p>
+        <p>OOP offers a powerful tool - polymorphism. You'll never embrace that if you have <code>else</code> in your back pocket, so challenge yourself not to use it.</p>
+
+    </section>
+
+    <section>
+
+        <h3>Option 1: Return early</h3>
+
+        <pre><code class="js" data-trim>
+class Thing {
+    uppercase(string) {
+        if (typeof string !== "string") {
+            throw new TypeError("...");
+        }
+        if (!string) {
+            return "";
+        }
+        return string.toUpperCase();
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>This breaks your methods into 2 sections.</p>
+
+        <pre><code class="js" data-trim>
+class Thing {
+    uppercase(string) {
+        // 1. Validation checks and easy-outs.
+        if (typeof string !== "string") {
+            throw new TypeError("...");
+        }
+        if (!string) {
+            return "";
+        }
+        // 2. Actual processing.
+        return string.toUpperCase();
+    }
+}
+        </code></pre>
+
+        <aside class="notes">
+            <p>A cached value existing is a good example of an easy-out.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <h3>Option 2: Null Object Pattern</h3>
+
+        <p>A Null Object has the same interface as the normal object but it does nothing.</p>
+
+        <pre><code class="js" data-trim>
+class Cat {
+    sound() { return "meow"; }
+}
+class NullAnimal {
+    sound() {}
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+function getAnimal(type) {
+    if (type === "cat") { return new Cat(); }
+    return new NullAnimal();
+}
+["cat", "snake"].map((a) => getAnimal(a).sound());
+// -&gt; ["meow", undefined]
+        </code></pre>
+
+        <aside class="notes">
+            <p>This is a full embrace of <strong>polymorphism</strong>.</p>
+        </aside>
+
     </section>
 
 </section>
@@ -204,34 +326,84 @@ describe("Table", () =&gt; {
     </section>
 
     <section>
-        <p>Stop storing data in primitives. With a wrapped primitive we can easily see what the primitive represents.</p>
-        <!-- Url = string; ... = string -->
-    </section>
 
-    <section>
+        <p>With a wrapped primitive we can easily see what the primitive represents.</p>
 
         <pre><code class="js" data-trim>
-class Currency {
-    constructor(rawValue, taxRate = 20) {}
-    value() {}
-    withTax() {}
-    format(currencyCode = null) {}
-    formatWithTax(currencyCode = null) {}
+class NameTag {
+    display(name) {
+        alert(name.toSring());
+    }
 }
         </code></pre>
 
+        <p>These would work, but does it make sense for them to be used?</p>
+
         <pre><code class="js" data-trim>
-let price = new Currency(1234.67);
-price.withTax(); // -&gt; 1481.472
-price.format(); // -&gt; "1,234.56"
-price.formatWithTax("GBP"); // -&gt; "£1,481.47"
+let tag1 = new NameTag("JLo");
+let tag2 = new NameTag(123);
+let tag3 = new NameTag(new Date());
         </code></pre>
 
     </section>
 
     <section>
 
-        <p>If you're intending to use a lot of emoji in your string, it may go strange.</p>
+        <p>Compare that to something like this.</p>
+
+        <pre><code class="js" data-trim>
+class Name {
+    constructor(name) { this.name = name; }
+    setAlias(alias) { this.alias = alias; }
+    toString() { return this.alias || this.name; }
+}
+
+let tag1 = new NameTag(new Name("JLo"));
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>We can validate the data on the way in.</p>
+
+            <pre><code class="js" data-trim>
+class NameTag {
+    display(name) {
+        if (!(name instanceof Name)) {
+            throw new TypeError("...");
+        }
+        alert(name.toSring());
+    }
+}
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>This works really well with languages that have type-hinting.</p>
+
+        <pre><code class="php" data-trim>
+&lt;?php
+namespace MyApp\Repository;
+
+use MyApp\Entity\Name;
+
+class NameTag
+{
+    public function display(Name $name)
+    {
+        echo $name->toString();
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>We can also check the primative in the <code>Name</code> class. For example, if you use emoji, JavaScript can go strange.</p>
         <pre><code class="js">"💩".length === 2</code></pre>
 
         <div class="fragment">
@@ -243,110 +415,50 @@ price.formatWithTax("GBP"); // -&gt; "£1,481.47"
             </code></pre>
         </div>
 
-    </section>
-
-    <!--section>
-
-        <p>I was making a library to handle WAI-ARIA attributes. Originally I had a class to handle each element.</p>
-
-        <pre><code class="js" data-trim>
-class Element {
-    constructor(element) {}
-    prefix(attribute) {}
-    interpretString(mixed) {}
-    translate(attribute) {}
-    unprefix(attribute) {}
-    setAttribute(attribute, value) {}
-    getAttribute(attribute) {}
-    hasAttribute(attribute) {}
-    removeAttribute(attribute) {}
-    // ...
-}
-        </code></pre>
-
-        <aside class="notes">
-            <p>See how the attributes are all handled in the element class?</p>
-        </aside>
+        <p class="fragment">Our <code>NameTag</code> shouldn't have to worry about that, we should handle it in <code>Name</code> keeping to the "Single Responsibility Principle".</p>
 
     </section>
 
     <section>
 
-        <p>Instead, I separated out some of the functionality into separate classes.</p>
+        <p>It will prevent you from storing data in a string. Data belongs in objects.</p>
 
-        <p>This one handles the attribute name, coercing it into a string, prefixing it if necessary and translating it to help with typos.</p>
+        <pre><code class="js" data-type>
+// Bad: data stored in a string.
+let url1 = "https://0.0.0.0:8000/my-page.html#part";
+
+// Get the optional port.
+/:(\d+)/.test(url1) ? url1.match(/:(\d+)/)[1] : ""; // -&gt; "8000"
+// Get the optional username.
+// er ...
+        </code></pre>
 
         <pre><code class="js" data-trim>
-class Name {
-    static coerce(mixed) {}
-    static prefix(attribute) {}
-    static unprefix(attribute) {}
-    static translate(attribute) {}
-    static normalise(attribute) {}
-    constructor(rawName) {}
-    name() {}
-    toString() {}
-}
+// Good: data stored in an object.
+let url2 = new URL("https://0.0.0.0:8000/my-page.html#part");
+// Get the optional port.
+url2.port; // -&gt; "8000"
+// Get the optional username.
+url2.username; // -&gt; ""
         </code></pre>
 
     </section>
 
     <section>
 
-        <p>The attribute value gets its own class (sub-classes handle different value types).</p>
+        <p>The primative types are:</p>
+        <ul>
+            <li>String</li>
+            <li>Number</li>
+            <li>Boolean</li>
+            <li>Null</li>
+            <li>Undefined</li>
+        </ul>
 
-        <pre><code class="js" data-trim>
-class Value {
-    constructor(/* StringType */ value) {}
-    read() {}
-    write(value) {}
-    toString() {}
-}
-        </code></pre>
-        <pre><code class="js" data-trim>
-class StringType {
-    constructor() {}
-    read() {}
-    write(value) {}
-    toString() {}
-}
-        </code></pre>
-
-        <aside class="notes">
-            <p>The <code>Value</code> acts as an adapter for the <code>*Type</code> classes.</p>
-        </aside>
+        <p class="fragment">You will have to use the primatives at some point, but don't pass them around - wrap them.</p>
 
     </section>
 
-    <section>
-
-        <p>The Attribute class just brings things together.</p>
-
-        <pre><code class="js" data-trim>
-class Attribute {
-    constructor(/* Name */ name, /* Value */ value) {}
-    update(value) {}
-    name() {
-        return this.name.toString();
-    }
-    toString() {
-        return `[${this.name()}="${this.value.toString()}"]`;
-    }
-    // ...
-}
-        </code></pre>
-        <pre><code class="js" data-trim>
-class AttributeList {
-    constructor() {}
-    add(/* Attribute */ attribute) {}
-    // ...
-}
-        </code></pre>
-
-    </section-->
-    <!-- NOTE: I haven't fully thought through what the new Element will be. -->
-
-    <!-- String, Number, Boolean, Null, Undefined -->
 
 </section>
 
@@ -385,8 +497,6 @@ class Collection {
     </section>
 
     <section>
-
-        <!-- <p>As well as making it easier to skim-read the code surrounding the collection, you can customise the functionality and keep related functionality in the collection.</p> -->
 
         <p>You can keep all your functionality in the new collection.</p>
 
@@ -430,6 +540,10 @@ let filtered = collection.filter(".my-class");
 let filtered = collection.flagged();
         </code></pre>
 
+    </section>
+
+    <section>
+        <p>This exercise is a great opportunity to use the Iterator Pattern from last week.</p>
     </section>
 
 </section>
@@ -534,18 +648,23 @@ score.announce(); // -&gt; 1
 
     <section>
 
-        <p>Remember the cooking examples from the first talk?</p>
+        <p>You may remember this class from previous weeks.</p>
 
-        <pre><code class="js" data-trim>
+        <pre class="tall"><code class="js" data-trim>
 class Temperature {
-    constructor(temperature) {
-        this.temperature = temperature;
+    static symbols = {
+        celsius: "C",
+        fahrenheit: "F"
+    };
+    constructor(value) {
+        this.value = value;
     }
-    celsius(format) {
-        return this.temperature;
-    }
-    fahrenheit(format) {
-        return this.temperature * (9 / 5) + 32;
+    celsius(format) { return this.value; }
+    fahrenheit(format) { return this.value * (9 / 5) + 32; }
+    format(mode = "celsius") {
+        return (
+            this[mode]() + "°" + this.constructor.symbols[mode];
+        );
     }
 }
         </code></pre>
@@ -554,6 +673,7 @@ class Temperature {
 let temperature = new Temperature(20);
 temperature.celsius(); // -&gt; 20
 temperature.fahrenheit(); // -&gt; 68
+temperature.format(); // -&gt; "20°C"
         </code></pre>
 
     </section>

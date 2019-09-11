@@ -343,6 +343,28 @@ let result = (
         <h2>3. Wrap All Primitives and Strings</h2>
     </section>
 
+<!--
+
+class User {
+    constructor(name, email) {
+        this.name = name;
+        this.email = email;
+    }
+}
+
+class Email {
+    constructor(email) {
+        if (!(/^.../i).test(email)) {
+            throw new ValidationError("...");
+        }
+        this.email = email;
+    }
+}
+// ^ This stops people typing crazy things like
+// new User("JLo", "01234000000") or new User("JLo", "Lorem ipsum dolor ...");
+
+-->
+
     <section>
 
         <p>With a wrapped primitive we can easily see what the primitive represents.</p>
@@ -404,13 +426,9 @@ class NameTag {
 
         <pre><code class="php" data-trim>
 &lt;?php
-namespace MyApp\Repository;
-
-use MyApp\Entity\Name;
-
 class NameTag
 {
-    public function display(Name $name)
+    public function display(NameInterface $name)
     {
         echo $name->toString();
     }
@@ -460,6 +478,10 @@ url2.port; // -&gt; "8000"
 url2.username; // -&gt; ""
         </code></pre>
 
+        <aside class="notes">
+            <p><code>URL</code> is a native class that can be polyfilled for IE11.</p>
+        </aside>
+
     </section>
 
     <section>
@@ -472,6 +494,11 @@ url2.username; // -&gt; ""
             <li>Null</li>
             <li>Undefined</li>
         </ul>
+
+<!--
+Only wrap primatives with behaviour.
+UUID / BIC, IBAN / email, URL / IP address
+-->
 
         <p class="fragment">You will have to use the primatives at some point, but don't pass them around - wrap them.</p>
 
@@ -572,6 +599,11 @@ let filtered = collection.flagged();
         <h2>5. One Dot per Line</h2>
     </section>
 
+<!--
+item.getOne().getTwo().getThree().getFour() ...
+// What if getTwo() returns null or undefined?
+-->
+
 </section>
 
 <section>
@@ -579,6 +611,18 @@ let filtered = collection.flagged();
     <section>
         <h2>6. Don't Abbreviate</h2>
     </section>
+
+<!--
+array.forEach((a) => {
+    // code
+    // code
+    // code
+    // code
+    // code
+    // code
+    a.doSomething(); // What was a?
+});
+-->
 
 </section>
 

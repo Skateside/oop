@@ -49,6 +49,15 @@ How to do it?
 
     <section>
 
+        <figure>
+            <img src="./hadouken.jpg" alt="">
+            <figcaption>What we're trying to avoid</figcaption>
+        </figure>
+
+    </section>
+
+    <section>
+
         <pre><code class="js" data-trim>
 class Thing {
     constructor() {
@@ -340,7 +349,203 @@ let result = (
 <section>
 
     <section>
-        <h2>3. Wrap All Primitives and Strings</h2>
+        <h2>3. Wrap Primitives and Strings</h2>
+    </section>
+
+    <section>
+
+        <p>Let's say you need to create a user with a name and e-mail address.</p>
+
+        <pre><code class="js" data-trim>
+class User {
+    constructor(name, email) {
+        this.name = name;
+        this.email = email;
+    }
+}
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>You'll only use it properly, right?</p>
+
+            <pre><code class="js" data-trim>
+let jlo = new User("JLo", "james.long@xigen.co.uk");
+let info = new User("Info", "info@xigen.co.uk");
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>What's to stop someone doing something like this?</p>
+
+        <pre><code class="js" data-trim>
+let user1 = new User("1", "Lorem ipsum dolor sit amet");
+let user2 = new User("🤪", "東京都");
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>If we wanted to use the e-mail address, we'd have to validate it every time.</p>
+
+            <pre><code class="js" data-trim>
+class User {
+    // ...
+    sendEmail() {
+        if ((/^...$/i).test(this.email)) {
+            // ...
+        }
+    }
+}
+            </code></pre>
+
+        </div>
+
+        <aside class="notes">
+            <p>東京都 = Tokyo Metropolis</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>A better way is to accept an <code>Email</code> object that's already been validated.</p>
+
+        <pre><code class="js" data-trim>
+class Email {
+    constructor(email) {
+        this.validate(email);
+        this.email = email;
+    }
+    validate(email) {
+        if (!(/^...$/i).test(email)) {
+            throw new Error("...");
+        }
+    }
+    toString() {
+        return this.email;
+    }
+}
+        </code></pre>
+
+        <pre><code class="js" data-trim>
+let jlo = new User("JLo", new Email("james.long@xigen.co.uk"));
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>This works really well with languages that have type-hinting.</p>
+
+        <pre><code class="php" data-trim>
+&lt;?php
+class User
+{
+    private $name;
+    private $email;
+    public function __construct($name, EmailInterface $email)
+    {
+        $this->name = $name;
+        $this->email = $email;
+    }
+    public function sendEmail()
+    {
+        $mail->send($this->email->getValue());
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>We can also check the primative in the <code>Name</code> class. For example, if you use emoji, JavaScript can go strange.</p>
+        <pre><code class="js">"💩".length === 2</code></pre>
+
+        <div class="fragment">
+            <p>Other times, it may not make as much sense as you expect.</p>
+            <pre><code class="js" data-trim>
+"'".length; // -&gt; 1
+"\'".length; // -&gt; 1
+"\\\'".length; // -&gt; 2
+            </code></pre>
+        </div>
+
+        <p class="fragment">Our <code>User</code> shouldn't have to worry about that, we should handle it in <code>Email</code> keeping to the "Single Responsibility Principle".</p>
+
+    </section>
+
+    <section>
+
+        <p>The primative types are:</p>
+        <ul>
+            <li><code>String</code></li>
+            <li><code>Number</code></li>
+            <li><code>Boolean</code></li>
+            <li><code>null</code></li>
+            <li><code>undefined</code></li>
+        </ul>
+
+        <div class="fragment">
+
+            <p>You don't have to wrap <em>every</em> primative, only ones with meaning or behaviour.</p>
+            <p>E-mail, IP address, ISBN, URL etc.</p>
+
+        </div>
+
+<!--
+Only wrap primatives with behaviour.
+UUID / BIC, IBAN / email, URL / IP address
+-->
+
+    </section>
+
+    <section>
+
+        <p>Modern browsers have a <code>URL</code> class.</p>
+
+        <pre><code class="js" data-trim>
+let url = new URL(
+    "http://jlo:abc123@localhost:8080/path?query=1&amp;foo=14#place"
+);
+
+url.port; // -&gt; "8080"
+url.hash; // -> "#place"
+url.username; // -&gt; "jlo"
+url.searchParams.get("foo"); // -&gt; "14"
+        </code></pre>
+
+        <p>Older browsers can be polyfilled.</p>
+
+    </section>
+
+    <section>
+
+        <p>It also handles validation.</p>
+
+        <pre><code class="js" data-trim>
+let invalid = new URL("Lorem ipsum");
+// TypeError: Failed to construct 'URL': Invalid URL
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>This means I can guarantee that it's valid before I use it.</p>
+
+            <pre><code class="js" data-trim>
+// fetch() will coerce the first argument into a string.
+// The same happens with `window.location.href = x`.
+fetch(url)
+    .then((response) => response.text())
+    .then((markup) => { /* ... */ });
+            </code></pre>
+
+        </div>
+
     </section>
 
 <!--
@@ -365,7 +570,7 @@ class Email {
 
 -->
 
-    <section>
+    <!--section>
 
         <p>With a wrapped primitive we can easily see what the primitive represents.</p>
 
@@ -495,14 +700,14 @@ url2.username; // -&gt; ""
             <li>Undefined</li>
         </ul>
 
-<!--
+<!- -
 Only wrap primatives with behaviour.
 UUID / BIC, IBAN / email, URL / IP address
--->
+- ->
 
         <p class="fragment">You will have to use the primatives at some point, but don't pass them around - wrap them.</p>
 
-    </section>
+    </section-->
 
 
 </section>
@@ -599,6 +804,76 @@ let filtered = collection.flagged();
         <h2>5. One Dot per Line</h2>
     </section>
 
+    <section>
+
+        <p>Don't chain method calls and don't assume the results.</p>
+
+        <pre><code class="js" data-trim>
+// Bad: multiple dots.
+this.getFilters()
+    .first()
+    .getRate()
+    .addTax()
+    .getRandomValue()
+    // ...
+    ;
+        </code></pre>
+
+        <aside class="notes">
+            <p>Although there's only 1 dot per line, that statement contains multiple dots.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>If anything changed, the code would break.</p>
+        <p>For example, what if we returned <code>null</code> from <code>.first()</code> if <code>.getFilters()</code> was empty?</p>
+
+        <pre><code class="js" data-trim>
+this.getFilters()
+    .first()
+    .getRate()
+    // ...
+    ;
+// TypeError: Cannot read property 'getRate' of null
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <figure>
+            <img src="./lod.png" alt="" style="background-color: #fff">
+            <figcaption>Remember the Law of Demeter?</figcaption>
+        </figure>
+
+    </section>
+
+    <section>
+
+        <p>The exception is when the methods return <code>this</code> like jQuery does.</p>
+
+        <pre><code class="js" data-trim>
+$("#element")
+    .attr("title", "lorem ipsum")
+    .addClass("foo")
+    .on("click", (e) => {})
+    // ...
+    ;
+        </code></pre>
+
+        <div class="fragment">
+            <p>Even then, split your chain over multiple lines so there's only 1 dot per line.</p>
+            <p>As well as being more readable, it helps to avoids merge conflicts.</p>
+        </div>
+
+        <aside class="notes">
+            <p>Example: one dev changes the class, another adds a new event listener.</p>
+        </aside>
+
+    </section>
+
 <!--
 item.getOne().getTwo().getThree().getFour() ...
 // What if getTwo() returns null or undefined?
@@ -612,7 +887,11 @@ item.getOne().getTwo().getThree().getFour() ...
         <h2>6. Don't Abbreviate</h2>
     </section>
 
-<!--
+    <section>
+
+        <p>Let's say you had a huge <code>forEach</code> function.</p>
+
+        <pre><code class="js" data-trim>
 array.forEach((a) => {
     // code
     // code
@@ -622,7 +901,87 @@ array.forEach((a) => {
     // code
     a.doSomething(); // What was a?
 });
--->
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Compare this class definition ...</p>
+
+        <pre><code class="js" data-trim>
+class Cst {
+    isM() {}
+    isF() {}
+    isRdOn() {}
+    addG(g) {}
+    addAddr(addr) {}
+    getAttr(attr) {}
+    getStr() {}
+    setPwdHash(p) {}
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>... to this one.</p>
+
+        <pre><code class="js" data-trim>
+class Customer {
+    isMale() {}
+    isFemale() {}
+    isReadOnly() {}
+    addGroup(group) {}
+    addAddress(address) {}
+    getAttribute(attribute) {}
+    getStore() {}
+    setPasswordHash(password) {}
+}
+        </code></pre>
+
+        <p class="fragment">Isn't that just easier to read?</p>
+
+    </section>
+
+    <section>
+
+        <p>Abbreviating makes you feel clever, but it masks other problems.</p>
+
+        <div class="fragment">
+            <p>Are you abbreviating because typing the same word multiple times is time-consuming?</p>
+            <p>Perhaps the method is being used too often and you're missing an opportunity to remove duplication.</p>
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>Is your method name getting too long?</p>
+        <p>It probably does too much. Your method name can probably be written in 2 words.</p>
+        <p class="fragment">You can also work things out from context - the <code>shipOrder</code> method on the <code>Order</code> class can just be called "ship". <code>order.ship()</code> is easy to understand.</p>
+
+    </section>
+
+    <section>
+
+        <p>There are well-known abbreviations which are fine. We usually use <code>i</code> to mean "index" when we're in a loop.</p>
+        <pre><code class="js" data-trim>
+// Inside a forEach()
+array.forEach((item, i) => { /* ... */ });
+
+// As a regular loop.
+let i = 0;
+while (i < array.length) {
+    // ...
+    i += 1;
+}
+        </code></pre>
+
+        <p class="fragment">Leave the abbreviations to the minifier.</p>
+
+    </section>
 
 </section>
 
@@ -632,12 +991,78 @@ array.forEach((a) => {
         <h2>7. Keep All Entities Small</h2>
     </section>
 
+    <section>
+
+        <p>Long files are harder to read, so keep them small.</p>
+
+        <ul class="fragment">
+            <li>No method with over <strong>20 lines</strong>.</li>
+            <li>No package with over <strong>15 files</strong>.</li>
+            <li>No classes with over <strong>200 lines</strong>.</li>
+        </ul>
+
+        <p class="fragment">This is <em>extremely</em> challenging.</p>
+
+    </section>
+
+    <section>
+
+        <p>If you have classes with more than 200 lines or a method with more than 20 lines, it probably does more than one thing.</p>
+        <p>Try to separate them out so that each class/method only has a single responsibility.</p>
+
+        <aside class="notes">
+            <p>Whitespace and comments don't count.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>This will teach you segregation and modularity.</p>
+        <p>It will encourage you to keep your classes and methods concentrated on a single responsibility.</p>
+        <p class="fragment">There is some debate about the actual numbers. I've also heard maximum of <strong>10 lines</strong> per method, maximum of <strong>10 methods</strong> per class.</p>
+        <p class="fragment">The original article said <q>no class over 50 lines and no package over 10 files</q>.</p>
+
+        <aside class="notes">
+            <p>Important question to ask yourself: "did I need to add that line/file?"</p>
+        </aside>
+
+    </section>
+
 </section>
 
 <section>
 
     <section>
         <h2>8. No More than Two Constructor Parameters</h2>
+    </section>
+
+    <section>
+
+        <p>This is pretty easy to understand.</p>
+
+        <pre><code class="js" data-trim>
+class TwoParameters {
+    constructor(lorem, ipsum) {
+        // ...
+    }
+}
+
+class ThreeParameters {
+    constructor(lorem, ipsum, dolor) {
+        // ...
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>If you class needs more than 2 paramters to set it up, it's probably worried about too many things.</p>
+        <p class="fragment">Do you need all those parameters at the start or can you add others later on using other methods?</p>
+        <p class="fragment">Have you considered using a mediator class to manage all the different dependencies?</p>
+
     </section>
 
 </section>
@@ -738,6 +1163,11 @@ temperature.fahrenheit(); // -&gt; 68
 temperature.format(); // -&gt; "20°C"
         </code></pre>
 
+    </section>
+
+    <section>
+        <p>This is just <strong>encapsulation</strong>.</p>
+        <p>We should be able to change how data is stored or how processes operate without re-writing a lot of the code, the object should handle that for us.</p>
     </section>
 
 </section>

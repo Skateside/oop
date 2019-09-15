@@ -44,6 +44,50 @@ How to do it?
 <section>
 
     <section>
+        <h2>What are calisthenics?</h2>
+    </section>
+
+    <section>
+
+        <blockquote>
+            <p>Calisthenics is a form of exercise consisting of a variety of movements which exercise large muscle groups ... often performed rhythmically and with minimal equipment ... intended to increase strength, fitness and flexibility</p>
+        </blockquote>
+        <cite>Wikipedia</cite>
+
+    </section>
+
+    <section>
+
+        <p>Object Calisthenics are a series of exercises that are designed to improve your coding skills and force you to think in object-oriented terms.</p>
+        <p class="fragment">They don't represent code quality but your coding will improve if you start doing them.</p>
+
+        <div class="fragment">
+
+            <p>They were invented in an essay by Jeff Bay in the book The ThoughtWorks Anthology.</p>
+
+            <figure class="book">
+                <img src="./thoughtworks-anthology.jpg">
+                <figcaption>The ThoughtWorks Anthology (2008)</figcaption>
+            </figure>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>Object calisthenics are 9 rules that are designed to get you out of your programming comfort zone.</p>
+        <p>The essay was very influential. Once you know these rules, you'll start to recognise them in other software.</p>
+        <p class="fragment">These may take too much time in the office, but you should try to do them for personal projects.</p>
+        <p class="fragment">These challenges will probably make you angry.</p>
+
+    </section>
+
+</section>
+
+<section>
+
+    <section>
         <h2>1. Only One Indent Level</h2>
     </section>
 
@@ -58,7 +102,9 @@ How to do it?
 
     <section>
 
-        <pre><code class="js" data-trim>
+        <h3>What is an indent level?</h3>
+
+        <pre class="fragment"><code class="js" data-trim>
 class Thing {
     constructor() {
         while (something) {
@@ -68,7 +114,7 @@ class Thing {
 }
         </code></pre>
 
-        <pre><code class="js" data-trim>
+        <pre class="fragment"><code class="js" data-trim>
 class Thing {
     constructor() {
         while (something) {
@@ -138,7 +184,7 @@ class Table {
 }
         </code></pre>
 
-        <p class="fragment">As a bonus, the method names are very easy to understand as a result.</p>
+        <p class="fragment">As a bonus, the method names become very easy to understand.</p>
 
     </section>
 
@@ -151,13 +197,13 @@ class HeadingTable extends Table {
     drawRow(row) {
         let html = "&lt;tr&gt;";
         row.forEach((cell, i) =&gt; {
-            html += this.decideType(cell, i);
+            html += this.decideType(cell, i === 0);
         });
         return html + "&lt;/tr&gt;";
     }
-    decideType(cell, i) {
+    decideType(cell, isHeading) {
         return (
-            i === 0
+            isHeading
             ? this.drawHeading(cell)
             : this.drawCell(cell)
         );
@@ -247,7 +293,11 @@ class Thing {
     <section>
 
         <p>Ever seen a huge nested conditional statement and you spend ages going through it trying to work out what it's doing?</p>
-        <p>OOP offers a powerful tool - polymorphism. You'll never embrace that if you have <code>else</code> in your back pocket, so challenge yourself not to use it.</p>
+        <p>OOP offers <strong>polymorphism</strong> - a powerful tool that you'll never embrace if you keep using <code>else</code>.</p>
+
+        <aside class="notes">
+            <p>There are 3 options for avoiding <code>else</code>.</p>
+        </aside>
 
     </section>
 
@@ -268,6 +318,10 @@ class Thing {
     }
 }
         </code></pre>
+
+        <aside class="notes">
+            <p>When I started, the advice was only return once at the end. Turns out that was bad advice.</p>
+        </aside>
 
     </section>
 
@@ -299,15 +353,36 @@ class Thing {
 
     <section>
 
-        <h3>Option 2: Null Object Pattern</h3>
+        <h3>Option 2: Ternary Operator</h3>
+
+        <p>Ternary operators are allowed even though they're a short-cut for <code>if...else</code>. But write them like this:</p>
+
+        <pre><code class="js" data-trim>
+let result = (
+    condition
+    ? resultIfTrue
+    : resultIfFalse
+);
+        </code></pre>
+
+        <p class="fragment">As well as being easier to read, this has a single level of indentation. A nested ternary would have a second level of identation and go against rule 1.</p>
+
+    </section>
+
+    <section>
+
+        <h3>Option 3: Null Object Pattern</h3>
 
         <p>A Null Object has the same interface as the normal object but it does nothing.</p>
 
         <pre><code class="js" data-trim>
-class Cat {
+class Animal {
+    sound() { throw new Error("not set up"); }
+}
+class Cat extends Animal {
     sound() { return "meow"; }
 }
-class NullAnimal {
+class NullAnimal extends Animal {
     sound() {}
 }
         </code></pre>
@@ -328,19 +403,58 @@ function getAnimal(type) {
 
     <section>
 
-        <h3>Option 3: Ternary Operator</h3>
-
-        <p>Ternary operators are allowed even though they're a short-cut for <code>if...else</code>. But write them like this:</p>
+        <p><code>else</code> is often unnecessary.</p>
 
         <pre><code class="js" data-trim>
-let result = (
-    condition
-    ? resultIfTrue
-    : resultIfFalse
-);
+function unnecessaryElse() {
+    if (something) {
+        var a = 1;
+    } else {
+        var a = 2;
+    }
+}
+        </code></pre>
+        <pre class="fragment"><code class="js" data-trim>
+function ternary() {
+    var a = (
+        something
+        ? 1
+        : 2
+    );
+}
+        </code></pre>
+        <pre class="fragment"><code class="js" data-trim>
+function noElse() {
+    var a = 2;
+    if (something) {
+        a = 1;
+    }
+}
         </code></pre>
 
-        <p class="fragment">As well as being easier to read, this has a single level of indentation. A nested ternary would have a second level of identation and go against rule 1.</p>
+    </section>
+
+    <section>
+
+        <p>You might also see a <code>throw</code> or <code>return</code> in an <code>else</code> - it's not needed.</p>
+
+        <pre><code class="js" data-trim>
+function unnecessaryElse() {
+    if (something) {
+        var a = 1;
+    } else {
+        throw new Error("...");
+    }
+}
+        </code></pre>
+        <pre class="fragment"><code class="js" data-trim>
+function justThrowIt() {
+    if (!something) {
+        throw new Error("...");
+    }
+    var a = 1;
+}
+        </code></pre>
 
     </section>
 
@@ -425,7 +539,7 @@ class Email {
             throw new Error("...");
         }
     }
-    toString() {
+    getValue() {
         return this.email;
     }
 }
@@ -463,7 +577,7 @@ class User
 
     <section>
 
-        <p>We can also check the primative in the <code>Name</code> class. For example, if you use emoji, JavaScript can go strange.</p>
+        <p>You may need to know something about the string. For example, if you use emoji, JavaScript can go strange.</p>
         <pre><code class="js">"💩".length === 2</code></pre>
 
         <div class="fragment">
@@ -476,6 +590,42 @@ class User
         </div>
 
         <p class="fragment">Our <code>User</code> shouldn't have to worry about that, we should handle it in <code>Email</code> keeping to the "Single Responsibility Principle".</p>
+
+    </section>
+
+    <section>
+
+        <p>Your objects should be "SOLID".</p>
+
+        <ul>
+            <li>
+                <strong>S</strong>ingle Responsibility Principle
+                <br><small>A class should only have a single responsibility.</small>
+            </li>
+            <li>
+                <strong>O</strong>pen/Closed Principle
+                <br><small>Objects should be open for extension but closed for modification.</small>
+            </li>
+            <li>
+                <strong>L</strong>iskov Substitution Principle
+                <br><small>You should be able to replace instances with sub-classes without breaking the program.</small>
+            </li>
+            <li>
+                <strong>I</strong>nterface Segregation Principle
+                <br><small>Many client-specific interfaces are better than one general-purpose interface.</small>
+            </li>
+            <li>
+                <strong>D</strong>ependency Inversion Principle
+                <br><small>High-level modules should not depend on low-level modules, abstractions should not depend on details.</small>
+            </li>
+        </ul>
+
+        <aside class="notes">
+            <p>Who's heard of this before?</p>
+            <p>Validating in another class forces you to learn <strong>S</strong>.</p>
+            <p>Only 1 level of indentation forced you to learn <strong>O</strong>.</p>
+            <p>Avoiding else with the Null Object Pattern forces you to learn <strong>L</strong>.</p>
+        </aside>
 
     </section>
 
@@ -496,11 +646,6 @@ class User
             <p>E-mail, IP address, ISBN, URL etc.</p>
 
         </div>
-
-<!--
-Only wrap primatives with behaviour.
-UUID / BIC, IBAN / email, URL / IP address
--->
 
     </section>
 
@@ -534,9 +679,11 @@ let invalid = new URL("Lorem ipsum");
 
         <div class="fragment">
 
-            <p>This means I can guarantee that it's valid before I use it.</p>
+            <p>This means I can guarantee that the URL is valid before I use it.</p>
 
             <pre><code class="js" data-trim>
+let url = new URL(document.querySelector("...").value);
+
 // fetch() will coerce the first argument into a string.
 // The same happens with `window.location.href = x`.
 fetch(url)
@@ -546,169 +693,12 @@ fetch(url)
 
         </div>
 
-    </section>
-
-<!--
-
-class User {
-    constructor(name, email) {
-        this.name = name;
-        this.email = email;
-    }
-}
-
-class Email {
-    constructor(email) {
-        if (!(/^.../i).test(email)) {
-            throw new ValidationError("...");
-        }
-        this.email = email;
-    }
-}
-// ^ This stops people typing crazy things like
-// new User("JLo", "01234000000") or new User("JLo", "Lorem ipsum dolor ...");
-
--->
-
-    <!--section>
-
-        <p>With a wrapped primitive we can easily see what the primitive represents.</p>
-
-        <pre><code class="js" data-trim>
-class NameTag {
-    display(name) {
-        alert(name.toSring());
-    }
-}
-        </code></pre>
-
-        <p>These would work, but does it make sense for them to be used?</p>
-
-        <pre><code class="js" data-trim>
-let tag1 = new NameTag("JLo");
-let tag2 = new NameTag(123);
-let tag3 = new NameTag(new Date());
-        </code></pre>
-
-    </section>
-
-    <section>
-
-        <p>Compare that to something like this.</p>
-
-        <pre><code class="js" data-trim>
-class Name {
-    constructor(name) { this.name = name; }
-    setAlias(alias) { this.alias = alias; }
-    toString() { return this.alias || this.name; }
-}
-
-let tag1 = new NameTag(new Name("JLo"));
-        </code></pre>
-
-        <div class="fragment">
-
-            <p>We can validate the data on the way in.</p>
-
-            <pre><code class="js" data-trim>
-class NameTag {
-    display(name) {
-        if (!(name instanceof Name)) {
-            throw new TypeError("...");
-        }
-        alert(name.toSring());
-    }
-}
-            </code></pre>
-
-        </div>
-
-    </section>
-
-    <section>
-
-        <p>This works really well with languages that have type-hinting.</p>
-
-        <pre><code class="php" data-trim>
-&lt;?php
-class NameTag
-{
-    public function display(NameInterface $name)
-    {
-        echo $name->toString();
-    }
-}
-        </code></pre>
-
-    </section>
-
-    <section>
-
-        <p>We can also check the primative in the <code>Name</code> class. For example, if you use emoji, JavaScript can go strange.</p>
-        <pre><code class="js">"💩".length === 2</code></pre>
-
-        <div class="fragment">
-            <p>Other times, it may not make as much sense as you expect.</p>
-            <pre><code class="js" data-trim>
-"'".length; // -&gt; 1
-"\'".length; // -&gt; 1
-"\\\'".length; // -&gt; 2
-            </code></pre>
-        </div>
-
-        <p class="fragment">Our <code>NameTag</code> shouldn't have to worry about that, we should handle it in <code>Name</code> keeping to the "Single Responsibility Principle".</p>
-
-    </section>
-
-    <section>
-
-        <p>It will prevent you from storing data in a string. Data belongs in objects.</p>
-
-        <pre><code class="js" data-type>
-// Bad: data stored in a string.
-let url1 = "https://0.0.0.0:8000/my-page.html#part";
-
-// Get the optional port.
-/:(\d+)/.test(url1) ? url1.match(/:(\d+)/)[1] : ""; // -&gt; "8000"
-// Get the optional username.
-// er ...
-        </code></pre>
-
-        <pre><code class="js" data-trim>
-// Good: data stored in an object.
-let url2 = new URL("https://0.0.0.0:8000/my-page.html#part");
-// Get the optional port.
-url2.port; // -&gt; "8000"
-// Get the optional username.
-url2.username; // -&gt; ""
-        </code></pre>
-
         <aside class="notes">
-            <p><code>URL</code> is a native class that can be polyfilled for IE11.</p>
+            <p>You can also check the <code>URL</code> properties - does it have the right domain or credentials?</p>
+            <p>BTW - this is a huge security hole!</p>
         </aside>
 
     </section>
-
-    <section>
-
-        <p>The primative types are:</p>
-        <ul>
-            <li>String</li>
-            <li>Number</li>
-            <li>Boolean</li>
-            <li>Null</li>
-            <li>Undefined</li>
-        </ul>
-
-<!- -
-Only wrap primatives with behaviour.
-UUID / BIC, IBAN / email, URL / IP address
-- ->
-
-        <p class="fragment">You will have to use the primatives at some point, but don't pass them around - wrap them.</p>
-
-    </section-->
-
 
 </section>
 
@@ -717,8 +707,6 @@ UUID / BIC, IBAN / email, URL / IP address
     <section>
         <h2>4. First Class Collections</h2>
     </section>
-
-    <!-- Array, Object? -->
 
     <section>
 
@@ -779,10 +767,12 @@ class Collection {
 
         <pre><code class="js" data-trim>
 // Before:
-let filtered = elements.filter((el) => el.matches(".my-class"));
+let filtered = elements.filter((element) => (
+    element.matches(".is-flagged")
+));
 
 // After:
-let filtered = collection.filter(".my-class");
+let filtered = collection.filter(".is-flagged");
         </code></pre>
 
         <pre class="fragment"><code class="js" data-trim>
@@ -793,7 +783,14 @@ let filtered = collection.flagged();
     </section>
 
     <section>
-        <p>This exercise is a great opportunity to use the Iterator Pattern from last week.</p>
+
+        <p>Like the previous rule, this will force you to learn the <strong>Single Responsibility Principle</strong> and help you understand <strong>abstraction</strong>.</p>
+        <p class="fragment">This exercise is a great opportunity to use the Iterator Pattern from last week.</p>
+
+        <aside class="notes">
+            <p>Remember the 4 key concepts? Abstraction, Encapsulation, Inheritance and Polymorphism.</p>
+        </aside>
+
     </section>
 
 </section>
@@ -848,6 +845,8 @@ this.getFilters()
             <figcaption>Remember the Law of Demeter?</figcaption>
         </figure>
 
+        <p class="fragment">Many dots per line/statement is you talking to a <del>friend of a friend</del> stranger.</p>
+
     </section>
 
     <section>
@@ -873,11 +872,6 @@ $("#element")
         </aside>
 
     </section>
-
-<!--
-item.getOne().getTwo().getThree().getFour() ...
-// What if getTwo() returns null or undefined?
--->
 
 </section>
 
@@ -918,17 +912,14 @@ class Cst {
     addAddr(addr) {}
     getAttr(attr) {}
     getStr() {}
-    setPwdHash(p) {}
 }
         </code></pre>
 
-    </section>
+        <div class="fragment">
 
-    <section>
+            <p>... to this one.</p>
 
-        <p>... to this one.</p>
-
-        <pre><code class="js" data-trim>
+            <pre><code class="js" data-trim>
 class Customer {
     isMale() {}
     isFemale() {}
@@ -937,11 +928,16 @@ class Customer {
     addAddress(address) {}
     getAttribute(attribute) {}
     getStore() {}
-    setPasswordHash(password) {}
 }
-        </code></pre>
+            </code></pre>
 
-        <p class="fragment">Isn't that just easier to read?</p>
+        </div>
+
+        <aside class="notes">
+            <p>Isn't is easier to read?</p>
+            <p>Hands up if you thought <code>getStr</code> was "get string"? Keep it up if you can think of a better abbreviation.</p>
+            <p><q>Death before confusion</q> - Douglas Crockford.</p>
+        </aside>
 
     </section>
 
@@ -1003,6 +999,11 @@ while (i < array.length) {
 
         <p class="fragment">This is <em>extremely</em> challenging.</p>
 
+        <aside class="notes">
+            <p>Method of 20 lines, class of 200 lines means no more than 10 methods per class.</p>
+            <p>Whitespace and comments don't count as lines.</p>
+        </aside>
+
     </section>
 
     <section>
@@ -1018,13 +1019,28 @@ while (i < array.length) {
 
     <section>
 
-        <p>This will teach you segregation and modularity.</p>
-        <p>It will encourage you to keep your classes and methods concentrated on a single responsibility.</p>
-        <p class="fragment">There is some debate about the actual numbers. I've also heard maximum of <strong>10 lines</strong> per method, maximum of <strong>10 methods</strong> per class.</p>
+        <p>There is some debate about the actual numbers. I've also heard maximum of <strong>10 lines</strong> per method, maximum of <strong>10 methods</strong> per class.</p>
         <p class="fragment">The original article said <q>no class over 50 lines and no package over 10 files</q>.</p>
 
         <aside class="notes">
             <p>Important question to ask yourself: "did I need to add that line/file?"</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <ul>
+            <li>No method with over <strong>20 lines</strong>.</li>
+            <li>No package with over <strong>15 files</strong>.</li>
+            <li>No classes with over <strong>200 lines</strong>.</li>
+        </ul>
+
+        <p class="fragment">This rule will teach you segregation and modularity.</p>
+        <p class="fragment">It will encourage you to keep your classes and methods concentrated on a single responsibility.</p>
+
+        <aside class="notes">
+            <p>Important questions: do you have a base experience and an heightened one? You have 2 classes.</p>
         </aside>
 
     </section>
@@ -1059,10 +1075,80 @@ class ThreeParameters {
 
     <section>
 
-        <p>If you class needs more than 2 paramters to set it up, it's probably worried about too many things.</p>
+        <p>If you class needs more than 2 parameters to set it up, it's probably worried about too many things.</p>
         <p class="fragment">Do you need all those parameters at the start or can you add others later on using other methods?</p>
         <p class="fragment">Have you considered using a mediator class to manage all the different dependencies?</p>
 
+    </section>
+
+    <section>
+
+        <p>As an example, consider a name.</p>
+
+        <pre><code class="js" data-trim>
+class Name {
+    constructor(firstName, middleName, surname) {
+        // ...
+    }
+}
+        </code></pre>
+
+        <p class="fragment">Can you guarantee that users won't have 2 middle names?</p>
+        <p class="fragment">Can you guarantee that they won't have 0?</p>
+
+    </section>
+
+    <section>
+
+        <p>We draw a distinction between family names and given names for legal reasons. Maybe your code should as well?</p>
+
+        <pre><code class="js" data-trim>
+class GivenNames {
+    constructor() { this.names = []; }
+    add(name) { this.names.push(name); }
+    toString() { return this.names.join(" "); }
+}
+
+class Name {
+    constructor(surname, givenNames) {
+        // ...
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>You could even add more information to the given names collection.</p>
+
+        <pre><code class="js" data-trim>
+class GivenNames {
+    // ...
+    preferredName(index) {
+        this.preferred = this.names[index];
+    }
+    initialise(index, initial) {
+        this.initials[index] = initial;
+    }
+}
+        </code></pre>
+
+        <pre><code class="js" data-trim>
+let given = new GivenNames();
+given.add("George")
+given.add("Raymond")
+given.add("Richard")
+given.initialise(1, "R")
+given.initialise(2, "R");
+let name = new Name("Martin", given);
+name.toSring(); // -&gt; "George R. R. Martin"
+        </code></pre>
+
+    </section>
+
+    <section>
+        <p>It sounds hard, but you code will be a lot less complex if you keep to <strong>two constructor parameters</strong>.<p>
     </section>
 
 </section>
@@ -1075,7 +1161,7 @@ class ThreeParameters {
 
     <section>
 
-        <p>Getters and setters don't tell you anything about the object.</p>
+        <p>Getters and setters don't tell you anything about the processes but tell you everything about the data.</p>
 
         <pre><code class="js" data-trim>
 class Score {
@@ -1163,16 +1249,71 @@ temperature.fahrenheit(); // -&gt; 68
 temperature.format(); // -&gt; "20°C"
         </code></pre>
 
+        <aside class="notes">
+            <p>Rather than <code>getCelsius</code> or <code>setValue</code>, it's easy to read the code and understand it.</p>
+        </aside>
+
     </section>
 
     <section>
-        <p>This is just <strong>encapsulation</strong>.</p>
+
+        <p>This rule really helps with object processes.</p>
+
+        <pre><code class="js" data-trim>
+// We're exposing too much information.
+let comment = new Comment();
+comment.setMessage("...");
+comment.setUser(user);
+comment.setStatus(Comment.PENDING);
+comment.setDate(new Date());
+        </code></pre>
+
+        <pre><code class="js" data-trim>
+// The data is safely encapsulated in the object.
+let comment = new Comment("...", user);
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>"No properties" just means "don't access or set properties unless it's within the current class".</p>
+        <p>If you remember the advice "<strong>ask, don't take</strong>" from the first week, this should be very familiary.</p>
+
+    </section>
+
+    <section>
+        <p>No getters and setters is just <strong>encapsulation</strong>.</p>
         <p>We should be able to change how data is stored or how processes operate without re-writing a lot of the code, the object should handle that for us.</p>
     </section>
 
 </section>
 
+<section>
 
+    <section>
+
+        <h2>Object Calisthenics</h2>
+
+        <ol>
+            <li>Only One Indent Level</li>
+            <li>Don't Use <code>else</code></li>
+            <li>Wrap Primitives and Strings</li>
+            <li>First Class Collections</li>
+            <li>One Dot per Line</li>
+            <li>Don't Abbreviate</li>
+            <li>Keep All Entities Small</li>
+            <li>No More than Two Constructor Parameters</li>
+            <li>No Getters, Setters or Properties</li>
+        </ol>
+
+        <aside class="notes">
+            <p>Learn these and I promise your code will get better.</p>
+        </aside>
+
+    </section>
+
+</section>
 
 <section id="questions">
     <h1>Any questions?</h1>

@@ -1317,10 +1317,344 @@ Temperature.C; // -&gt; "celsius";
         <h3>1. Keep your hands to yourself!</h3>
 
         <div class="fragment">
+            <p>Only call your own methods and access your own properties.</p>
+            <p>Don't access global variables or another object's properties.</p>
+        </div>
 
-            <p>Only call your own methods.</p>
+    </section>
+
+    <section>
+
+        <p>Let's say that we have a class with a <code>name</code> property.</p>
+
+        <pre><code class="js" data-trim>
+class Person {
+    constructor(name) {
+        this.name = name;
+    }
+}
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>Now let's say that we need to validate the name so it doesn't include anything silly.</p>
 
             <pre><code class="js" data-trim>
+// Bad - accesses a global function :(
+class Person {
+    constructor(name) {
+        if (isValidName(name)) {
+            this.name = name;
+        }
+    }
+}
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>It's better to either add a validation method on the class itself.</p>
+
+        <pre><code class="js" data-trim>
+class Person {
+    constructor(name) {
+        if (this.isValidName(name)) {
+            this.name = name;
+        }
+    }
+    isValidName(name) {
+        // ...
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Even better is to validate the name in another object and pass that to your class.</p>
+
+        <pre><code class="js" data-trim>
+class Person {
+    constructor(name) { this.name = name; }
+}
+
+class Name {
+    constructor(name) {
+        if (this.isValid(name)) {
+            this.name = name;
+        }
+    }
+    isValid() { /* ... */ }
+    getValue() { return this.name; }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Another problem is when you want to cache results but use a global variable to do it.</p>
+
+        <pre><code class="js" data-trim>
+// Bad - uses the global variable `people` :(
+class Person {
+    constructor(name) {
+        this.name = name;
+        people[name] = this;
+    }
+}
+        </code></pre>
+
+        <div class="fragment">
+
+            <p>Store that on the object itself.</p>
+
+            <pre><code class="js" data-trim>
+class Person {
+    static cache = {};
+    constructor(name) {
+        this.name = name;
+        this.constructor.cache[name] = this;
+    }
+}
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>You can also build a static <code>create</code> class which checks the cache before making a new instance.</p>
+
+        <pre><code class="js" data-trim>
+class Person {
+    static cache = {};
+    static create(name) {
+        if (!this.cache[name]) {
+            this.cache[name] = new this(name);
+        }
+        reutrn this.cache[name];
+    }
+    constructor(name) {
+        this.name = name;
+    }
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>If your objects <strong>keep their hands to themselves</strong> we don't have to worry about what they're touching.</p>
+        <p>They will only store information in themselves, so we always know where to find it.</p>
+
+    </section>
+
+    <section>
+
+        <h3>2. Don't leave your toys lying around!</h3>
+
+        <div class="fragment">
+
+            <p>Don't modify other objects or the global scope.</p>
+            <p>You may also hear "<strong>play nice with others</strong>".</p>
+
+        </div>
+
+        <aside class="notes">
+            <p>This is very similar to the previous rule.</p>
+        </aside>
+
+    </section>
+    <section>
+
+        <pre><code class="js" data-trim>
+// Good: everything contained.
+class Person {
+
+    addJob(job) {
+        this.jobs.push(job);
+        job.addEmployee(this);
+    }
+
+}
+        </code></pre>
+        <pre><code class="js" data-trim>
+// Bad: telling the job what to do.
+class Person {
+
+    addJob(job) {
+        this.jobs.push(job);
+        job.employees.push(this);
+    }
+
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>Even better is to use a "mediator" to connect the two objects.</p>
+
+        <pre><code class="js" data-trim>
+class Mediator {
+    constructor(person) {
+        this.person = person;
+    }
+    addJob(job) {
+        this.person.addJob(job);
+        job.addEmployee(this.person);
+    }
+}
+        </code></pre>
+
+        <p class="fragment">I'll explain the mediator pattern in more detail next week.</p>
+
+    </section>
+
+    <section>
+        <p>If your objects <strong>don't leave their toys lying around</strong> then no-one will trip over them.</p>
+        <p>Your object won't override anything by mistake.</p>
+        <p>We can also swap out the object for another one without affecting anything else - the object is fully self-contained.</p>
+    </section>
+
+    <section>
+
+        <h3>3. Ask, don't take!</h3>
+
+        <div class="fragment">
+
+            <p>Don't access properties, execute methods.</p>
+
+            <pre><code class="js" data-trim>
+var person = new Person("JLo");
+
+// Good: executing a method.
+sauce.getName(); // -&gt; "JLo"
+
+// Bad: accessing a property.
+sauce.name; // -&gt; "JLo"
+            </code></pre>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <p>When JavaScript tries is told to access a property, it checks a few places in order:</p>
+        <ol>
+            <li>The object itself.</li>
+            <li>The object's <code>prototype</code>.</li>
+            <li>The object's parent's <code>prototype</code>.</li>
+            <li>The object's parent's parent's <code>prototype</code> ...</li>
+            <li><code>Object.prototype</code></li>
+        </ol>
+        <p class="fragment">If it gets all the way to <code>Object.prototype</code> and still can't find the property, it returns <code>undefined</code>.</p>
+
+        <aside class="notes">
+            <p>This is why deeply nested structures are really inefficient in JavaScript.</p>
+        </aside>
+
+    </section>
+
+    <section>
+
+        <p>A useful side effect of this is that we get a <code>TypeError</code> if we make a typo or access methods that were removed (or we forgot to write).</p>
+
+        <pre><code class="js" data-trim>
+var person = new Person("JLo");
+
+person.age; // -&gt; undefined (Easy to mistake for 0)
+person.isBreathing; // -&gt; undefined (Easy to mistake for false)
+
+person.fly(); // TypeError: person.fly is not a function
+        </code></pre>
+
+        <p class="fragment"><q>Death before confusion</q> - <em>Douglas Crockford</em></p>
+
+    </section>
+
+    <section>
+        <p>If your object <strong>asks instead of taking</strong>, we know if we ever make a typo or use a method that was removed.</p>
+        <p>We can also do more complicated things in the background when we get information without having to change the rest of the code.</p>
+    </section>
+
+    <section>
+
+        <h3>4. Don't talk to strangers!</h3>
+
+        <div class="fragment">
+
+            <p>Only interact with things you've been told about.</p>
+
+            <pre><code class="js" data-trim>
+// Bad - talks to strangers.
+class Person {
+    constructor(name) {
+        this.name = new Name(name);
+    }
+}
+var person = new Person("James Long");
+            </code></pre>
+
+        </div>
+
+        <pre class="fragment"><code class="js" data-trim>
+// Good - doesn't talk to strangers.
+class Person {
+    constructor(name) {
+        this.name = name;
+    }
+}
+var person = new Person(new Name("James Long"));
+        </code></pre>
+
+
+    </section>
+
+    <section>
+
+        <p>This only applies to classes you've created. Native classes are fine.</p>
+
+        <pre><code class="js" data-trim>
+class Observer {
+    // ...
+    createEvent(name, detail) {
+        return new CustomEvent(name, {
+            bubbles: true,
+            cancelable: true,
+            detail: detail
+        });
+    }
+    // ...
+}
+        </code></pre>
+
+    </section>
+
+    <section>
+
+        <p>That extends to objects created by objects you know.</p>
+        <blockquote class="fragment">A friend of a friend is a stranger.</blockquote>
+        <figure class="fragment">
+            <img src="./lod.png" alt="" style="background-color: #fff">
+            <figcaption>This is known as The Law of Demeter</figcaption>
+        </figure>
+
+    </section>
+
+    <section>
+
+        <p>This is an easier trap to fall into than you think.</p>
+
+        <pre><code class="js" data-trim>
 class Person {
     constructor(name) { this.name = name; }
     getName() { return this.name; }
@@ -1334,28 +1668,13 @@ person.getName(); // -&gt; "JLo"
 
 // Bad: calling another method.
 person.getName().toLowerCase(); // -&gt; "jlo"
-            </code></pre>
-
-            <p class="fragment">Only chain if your methods return <code>this</code> like jQuery does.</p>
-
-        </div>
+        </code></pre>
 
     </section>
 
     <section>
 
-        <p>This is known as the "Law of Demeter" or "principle of least knowledge".</p>
-
-        <figure>
-            <img src="./lod.png" alt="" style="background-color: #fff">
-            <figcaption>The Law of Demeter</figcaption>
-        </figure>
-
-    </section>
-
-    <section>
-
-        <p>There are 2 ways to keep your hands to yourself. First, you can create a method that gives you the response you need.</p>
+        <p>There are 2 ways to resist talking to strangers like that. First, you can create a method that gives you the response you need.</p>
 
         <pre><code class="js" data-trim>
 class Person {
@@ -1428,168 +1747,6 @@ person.getName(); // -&gt; "JLo"
     </section>
 
     <section>
-        <p>If your object <strong>keeps its hands to itself</strong> then we can change the way the object works (or how the data is stored) without having to change places where it was used.</p>
-    </section>
-
-    <section>
-
-        <h3>2. Ask, don't take!</h3>
-
-        <div class="fragment">
-
-            <p>Don't access properties, execute methods.</p>
-
-            <pre><code class="js" data-trim>
-var person = new Person("JLo");
-
-// Good: executing a method.
-sauce.getName(); // -&gt; "JLo"
-
-// Bad: accessing a property.
-sauce.name; // -&gt; "JLo"
-            </code></pre>
-
-        </div>
-
-    </section>
-
-    <section>
-
-        <p>When JavaScript tries is told to access a property, it checks a few places in order:</p>
-        <ol>
-            <li>The object itself.</li>
-            <li>The object's <code>prototype</code>.</li>
-            <li>The object's parent's <code>prototype</code>.</li>
-            <li>The object's parent's parent's <code>prototype</code> ...</li>
-            <li><code>Object.prototype</code></li>
-        </ol>
-        <p class="fragment">If it gets all the way to <code>Object.prototype</code> and still can't find the property, it returns <code>undefined</code>.</p>
-
-        <aside class="notes">
-            <p>This is why deeply nested structures are really inefficient in JavaScript.</p>
-        </aside>
-
-    </section>
-
-    <section>
-
-        <p>A useful side effect of this is that we get a <code>TypeError</code> if we make a typo or access methods that were removed (or we forgot to write).</p>
-
-        <pre><code class="js" data-trim>
-var person = new Person("JLo");
-
-person.age; // -&gt; undefined (Easy to mistake for 0)
-person.isBreathing; // -&gt; undefined (Easy to mistake for false)
-
-person.fly(); // TypeError: person.fly is not a function
-        </code></pre>
-
-        <p class="fragment"><q>Death before confusion</q> - <em>Douglas Crockford</em></p>
-
-    </section>
-
-    <section>
-        <p>If your object <strong>asks instead of taking</strong>, we know if we ever make a typo or use a method that was removed.</p>
-        <p>We can also do more complicated things in the background when we get information without having to change the rest of the code.</p>
-    </section>
-
-    <section>
-
-        <h3>3. Don't leave your toys lying around!</h3>
-
-        <div class="fragment">
-
-            <p>Don't modify other objects or the global scope.</p>
-            <p>You may also hear "<strong>play nice with others</strong>".</p>
-
-        </div>
-
-    </section>
-    <section>
-
-        <pre><code class="js" data-trim>
-// Good: everything contained.
-class Person {
-
-    addJob(job) {
-        this.jobs.push(job);
-        job.addEmployee(this);
-    }
-
-}
-        </code></pre>
-        <pre><code class="js" data-trim>
-// Bad: telling the job what to do.
-class Person {
-
-    addJob(job) {
-        this.jobs.push(job);
-        job.employees.push(this);
-    }
-
-}
-        </code></pre>
-
-    </section>
-
-    <section>
-        <p>If your objects <strong>don't leave their toys lying around</strong> then no-one will trip over them.</p>
-        <p>Your object won't override anything by mistake. We can also do more complex things behind the scenes when setting information.</p>
-        <p>We can also swap out the object for another one without affecting anything else - the object is fully self-contained.</p>
-    </section>
-
-    <section>
-
-        <h3>4. Don't talk to strangers!</h3>
-
-        <div class="fragment">
-
-            <p>Only interact with things you've been told about.</p>
-
-            <pre><code class="js" data-trim>
-// Good - doesn't talk to strangers.
-class Person {
-    constructor(name) {
-        this.name = name;
-    }
-}
-var person = new Person(new Name("James Long"));
-            </code></pre>
-            <pre><code class="js" data-trim>
-// Bad - talks to strangers.
-class Person {
-    constructor(name) {
-        this.name = new Name(name);
-    }
-}
-var person = new Person("James Long");
-            </code></pre>
-
-        </div>
-
-    </section>
-
-    <section>
-
-        <p>This only applies to classes you've created. Native classes are fine.</p>
-
-        <pre><code class="js" data-trim>
-class Observer {
-    // ...
-    createEvent(name, detail) {
-        return new CustomEvent(name, {
-            bubbles: true,
-            cancelable: true,
-            detail: detail
-        });
-    }
-    // ...
-}
-        </code></pre>
-
-    </section>
-
-    <section>
         <p>If your object <strong>doesn't talk to strangers</strong> then we know what the object is interacting with. More importantly, we know where that interaction is happening.</p>
         <p>We can change or remove a dependency without another object breaking because it relied on it.</p>
     </section>
@@ -1597,8 +1754,8 @@ class Observer {
     <section>
         <ol>
             <li>Keep your hands to yourself!</li>
-            <li>Ask, don't take!</li>
             <li>Don't leave your toys lying around!</li>
+            <li>Ask, don't take!</li>
             <li>Don't talk to strangers!</li>
         </ol>
     </section>
